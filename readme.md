@@ -54,6 +54,25 @@ client.search(options, 'xbox one', function (err, listings) {
 });
 ```
 
+### Options
+
+Per request, options can be modified to specify a different city than whatever is specified during initialization:
+
+```javascript
+var
+  craigslist = require('node-craigslist');
+  client = craigslist.initialize({
+    city : 'seattle'
+  }),
+  options = {
+    city : 'boston'
+  };
+
+client.search(options, 'xbox one', function (err, listings) {
+  // listings (from Boston instead of Seattle)
+});
+```
+
 ### Listing Object
 
 Each listing returned has several properties... see the example below:
