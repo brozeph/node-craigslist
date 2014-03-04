@@ -2,6 +2,9 @@
 
 This module makes for simple retrieval of search results from Craigslist.com!
 
+[![Build Status](https://travis-ci.org/brozeph/node-craigslist.png)](https://travis-ci.org/brozeph/node-craigslist)
+[![Dependency Status](https://gemnasium.com/brozeph/settings-lib.png)](https://gemnasium.com/brozeph/settings-lib)
+
 ## Installation
 
 ```bash
