@@ -1,0 +1,40 @@
+{
+  "name": "node-craigslist",
+  "description": "a client library for searching, retrieving and creating Craigslist.com listings",
+  "private": false,
+  "version": "0.1.1",
+  "author": "Joshua Thomas (http://github.com/brozeph)",
+  "engine": "node >= 0.8.0",
+  "keywords": [
+    "craigslist",
+    "search"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.org:brozeph/node-craigslist.git"
+  },
+  "main": "./lib",
+  "scripts": {
+    "pretest": "jshint lib/*.js test/*.js ; rm -rf lib-cov ; jscoverage lib lib-cov",
+    "test": "mocha --check-leaks -R spec -r ./test/common.js ./test/lib",
+    "coverage": "NODE_NCL_COVERAGE=true mocha -R mocha-lcov-reporter -r ./test/common.js ./test/lib | ./node_modules/coveralls/bin/coveralls.js",
+    "posttest": "rm -rf reports ; mkdir -p reports ; NODE_NCL_COVERAGE=true mocha -R html-cov -r ./test/common.js ./test/lib > reports/coverage.html",
+    "functional": "mocha -R spec -r ./test/common.js ./test/functional"
+  },
+  "dependencies": {
+    "htmlparser": "~1.7.7",
+    "soupselect": "~0.2.0"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "coveralls": "*",
+    "jscoverage": "*",
+    "jshint": "*",
+    "mocha": "*",
+    "mocha-lcov-reporter": "*"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "license": "MIT"
+}
