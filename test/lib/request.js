@@ -1,8 +1,10 @@
 var
 	requestLib = requireWithCoverage('request');
 
-describe('functional tests for request', function () {
+describe('unit tests for request', function () {
 	'use strict';
+
+	this.timeout(25000);
 
 	var request;
 

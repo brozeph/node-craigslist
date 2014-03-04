@@ -1,10 +1,8 @@
 var
 	craigslist = requireWithCoverage('index');
 
-describe('functional tests for node-craigslist', function () {
+describe('unit tests for node-craigslist', function () {
 	'use strict';
-
-	this.timeout(25000);
 
 	var
 		client,
@@ -33,9 +31,7 @@ describe('functional tests for node-craigslist', function () {
 				done();
 			});
 		});
-	});
 
-	describe('#search', function () {
 		it('should properly search and use options to override', function (done) {
 			client.search({ city : 'spokane' }, 'xbox', function (err, data) {
 				should.not.exist(err);
@@ -47,9 +43,7 @@ describe('functional tests for node-craigslist', function () {
 				done();
 			});
 		});
-	});
 
-	describe('#search', function () {
 		it('should properly search and use options to override', function (done) {
 			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
 				should.not.exist(err);
@@ -59,6 +53,25 @@ describe('functional tests for node-craigslist', function () {
 				requestOptions.path.should.contain('query=xbox');
 				requestOptions.path.should.contain('minAsk=100');
 				requestOptions.path.should.contain('maxAsk=200');
+
+				done();
+			});
+		});
+
+		it('should properly parse markup', function (done) {
+			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
+				should.not.exist(err);
+				should.exist(data);
+				data.should.have.length(2);
+
+				data[0].pid.should.have.length.above(1);
+				data[0].category.should.have.length.above(1);
+				data[0].date.should.have.length.above(1);
+				should.exist(data[0].hasPic);
+				data[0].location.should.have.length.above(1);
+				data[0].price.should.have.length.above(1);
+				data[0].title.should.have.length.above(1);
+				data[0].url.should.have.length.above(1);
 
 				done();
 			});
