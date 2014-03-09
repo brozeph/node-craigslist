@@ -13,7 +13,7 @@ describe('functional tests for node-craigslist', function () {
 				city : 'seattle'
 			});
 
-		///*
+		/*
 		client.request.on('request', function (options) {
 			console.log(options);
 		});
