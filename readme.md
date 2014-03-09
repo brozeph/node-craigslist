@@ -86,5 +86,5 @@ Each listing returned has several properties... see the example below:
   location: 'Seattle',
   price: '250',
   title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
-  url: '/see/vgm/1234567890.html' }
+  url: 'https://seattle.craigslist.org/see/vgm/4355583965.html' }
 ```
