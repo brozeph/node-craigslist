@@ -9,7 +9,7 @@ describe('functional tests for node-craigslist', function () {
 	var client;
 
 	beforeEach(function () {
-		client = craigslist.initialize({
+		client = craigslist({
 				city : 'seattle'
 			});
 
