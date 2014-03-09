@@ -1,3 +1,7 @@
+# 0.1.6 / 2014.03.09
+
+* Ensuring queries are URI encoded properly
+
 # 0.1.5 / 2014.03.09
 
 * Simplified init (`initialize` function still works, but is unnecessary)
