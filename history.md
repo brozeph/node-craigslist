@@ -1,3 +1,8 @@
+# 0.1.7 / 2014.08.29
+
+* Moved to Cheerio.js for parsing HTML
+* Refactored library to increase readability
+
 # 0.1.6 / 2014.03.09
 
 * Ensuring queries are URI encoded properly
