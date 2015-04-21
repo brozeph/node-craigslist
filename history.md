@@ -1,3 +1,7 @@
+# 0.1.9 / 2015.04.20
+
+* Merged excellent pull-request from @jbredice to enable search within categories
+
 # 0.1.8 / 2015.04.08
 
 * Updated markup parsing for date

@@ -36,7 +36,7 @@ client.search('xbox one', function (err, listings) {
 
 ### Advanced Search
 
-Do you want to filter by price? Check out the following example:
+Do you want to filter by category and by price? Check out the following example:
 
 ```javascript
 var
@@ -45,6 +45,7 @@ var
     city : 'seattle'
   }),
   options = {
+    category : 'ppa',
     maxAsk : '200',
     minAsk : '100'
   };
@@ -56,7 +57,10 @@ client.search(options, 'xbox one', function (err, listings) {
 
 ### Options
 
-Per request, options can be modified to specify a different city than whatever is specified during initialization:
+Per request, options can be modified to specify the following:
+* a different city than whatever is specified during initialization
+* min and max price ranges
+* category
 
 ```javascript
 var
@@ -65,13 +69,64 @@ var
     city : 'seattle'
   }),
   options = {
-    city : 'boston'
+    category : '', // defaults to sss (all)
+    city : 'boston',
+    maxAsk : '200',
+    minAsk : '100'
   };
 
 client.search(options, 'xbox one', function (err, listings) {
   // listings (from Boston instead of Seattle)
 });
 ```
+
+#### Categories
+
+This list may change based on Craigslist updates, but at the time of v1.9, this is the current list:
+
+* sss = all
+* ata = antiques
+* ppa = appliances
+* ara = arts+crafts
+* sna = atvs/utvs/snow
+* pta = auto parts
+* baa = baby+kids
+* bar = barter
+* haa = beauty+hlth
+* bip = bike parts
+* bia = bikes
+* bpa = boat parts
+* boo = boats
+* bka = books
+* bfa = business
+* cta = cars+trucks
+* ema = cds/dvd/vhs
+* moa = cell phones
+* cla = clothes+acc
+* cba = collectibles
+* syp = computer parts
+* sya = computers
+* ela = electronics
+* gra = farm+garden
+* zip = free stuff
+* fua = furniture
+* gms = garage sales
+* foa = general
+* hva = heavy equipment
+* hsa = household
+* jwa = jewelry
+* maa = materials
+* mpa = motorcycle parts
+* mca = motorcycles
+* msa = music instr
+* pha = photo+video
+* rva = RVs
+* sga = sporting
+* tia = tickets
+* tla = tools
+* taa = toys+games
+* vga = video gaming
+* waa = wanted
 
 ### Listing Object
 
