@@ -76,6 +76,16 @@ describe('unit tests for node-craigslist', function () {
 				done();
 			});
 		});
+
+		it('should properly accept category', function (done) {
+			client.search({ category : 'ppa' }, 'washer', function (err, data) {
+				should.not.exist(err);
+				should.exist(data);
+				requestOptions.path.should.contain('ppa');
+				
+				done();
+			})
+		});
 	});
 
 });
