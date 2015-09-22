@@ -40,7 +40,7 @@ Do you want to filter by category and by price? Check out the following example:
 
 ```javascript
 var
-  craigslist = require('node-craigslist');
+  craigslist = require('node-craigslist'),
   client = craigslist({
     city : 'seattle'
   }),
@@ -64,7 +64,7 @@ Per request, options can be modified to specify the following:
 
 ```javascript
 var
-  craigslist = require('node-craigslist');
+  craigslist = require('node-craigslist'),
   client = craigslist({
     city : 'seattle'
   }),
