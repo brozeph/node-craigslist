@@ -20,7 +20,7 @@ To use it, it's as simple as the following example:
 
 ```javascript
 var
-  craigslist = require('node-craigslist');
+  craigslist = require('node-craigslist'),
   client = craigslist({
     city : 'seattle'
   });
