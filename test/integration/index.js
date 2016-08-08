@@ -1,23 +1,24 @@
+/*eslint no-magic-numbers:0*/
 var
-	craigslist = requireWithCoverage('index');
+	chai = require('chai'),
+
+	craigslist = require('../../dist/index.js'),
+
+	should = chai.should();
+
 
 describe('functional tests for node-craigslist', function () {
 	'use strict';
 
-	this.timeout(25000);
-
 	var client;
 
-	beforeEach(function () {
-		client = craigslist({
-				city : 'seattle'
-			});
+	/*eslint no-invalid-this:0*/
+	this.timeout(10000);
 
-		/*
-		client.request.on('request', function (options) {
-			console.log(options);
+	beforeEach(function () {
+		client = new craigslist.Client({
+			city : 'seattle'
 		});
-		//*/
 	});
 
 	describe('#search', function () {

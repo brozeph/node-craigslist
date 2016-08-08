@@ -1,20 +1,37 @@
+/*eslint no-magic-numbers:0*/
 var
-	requestLib = requireWithCoverage('request');
+	chai = require('chai'),
+	nock = require('nock'),
 
-describe('unit tests for request', function () {
+	requestLib = require('../../dist/web'),
+
+	should = chai.should();
+
+
+describe('unit tests for request', () => {
 	'use strict';
 
-	this.timeout(25000);
+	let
+		options,
+		request;
 
-	var request;
-
-	beforeEach(function () {
-		request = requestLib.initialize();
+	afterEach(() => {
+		nock.cleanAll();
 	});
 
-	describe('#getRequestOptions', function () {
-		it('should default timeout', function (done) {
-			var options = request.getRequestOptions({});
+	beforeEach(() => {
+		options = {
+			host : 'test.playnetwork.com',
+			path : '/',
+			secure : true
+		};
+
+		request = new requestLib.Request();
+	});
+
+	describe('#getRequestOptions', () => {
+		it('should default timeout', (done) => {
+			options = request.getRequestOptions({});
 
 			should.exist(options);
 			should.exist(options.timeout);
@@ -22,9 +39,9 @@ describe('unit tests for request', function () {
 			process.nextTick(done);
 		});
 
-		it('should set default options when input options are missing', function (done) {
-			request = requestLib.initialize({ secure : true });
-			var options = request.getRequestOptions({});
+		it('should set default options when input options are missing', (done) => {
+			request = new requestLib.Request({ secure : true });
+			options = request.getRequestOptions({});
 
 			should.exist(options);
 			should.exist(options.secure);
@@ -32,9 +49,9 @@ describe('unit tests for request', function () {
 			process.nextTick(done);
 		});
 
-		it('should override default options when input options are set', function (done) {
-			request = requestLib.initialize({ secure : true });
-			var options = request.getRequestOptions({ secure : false });
+		it('should override default options when input options are set', (done) => {
+			request = new requestLib.Request({ secure : true });
+			options = request.getRequestOptions({ secure : false });
 
 			should.exist(options);
 			should.exist(options.secure);
@@ -43,50 +60,73 @@ describe('unit tests for request', function () {
 		});
 	});
 
-	describe('#get', function () {
-		it('should set method to GET', function (done) {
-			var options;
+	describe('#get', () => {
+		it('should set method to GET', (done) => {
+			nock(`https://${options.host}`)
+				.get(options.path)
+				.reply(200);
 
-			request.on('request', function (requestOptions) {
-				options = requestOptions;
-			});
+			let requestOptions;
 
-			request.get({}, function (err, data) {
-				should.exist(options);
-				options.method.should.equal('GET');
+			request.on('request', (o) => (requestOptions = o));
 
-				done();
+			request.get(options, (err) => {
+				should.not.exist(err);
+				should.exist(requestOptions);
+				requestOptions.method.should.equal('GET');
+
+				return done();
 			});
 		});
 
-		it('should obey timeout', function (done) {
-			request.get({ timeout : 1, hostname : 'github.com', path : '/brozeph/node-craigslist' }, function (err, data) {
+		/*
+		it('should obey timeout', (done) => {
+			nock(`https://${options.host}`)
+				.get(options.path)
+				.socketDelay(5000)
+				.reply(200);
+
+			options.timeout = 1000;
+
+			request.get(options, function (err, data) {
+				console.log(err);
+				console.log(data);
+
 				should.exist(err);
 				should.exist(err.code);
 				err.code.should.equal('ECONNRESET');
 
-				done();
+				return done();
 			});
 		});
+		//*/
 
-		it('should return data', function (done) {
-			request.get({ hostname : 'github.com', path : '/brozeph/node-craigslist' }, function (err, data) {
+		it('should return data', (done) => {
+			nock(`https://${options.host}`)
+				.get(options.path)
+				.reply(200, { data : true });
+
+			request.get(options, function (err, data) {
 				should.not.exist(err);
 				should.exist(data);
 
-				done();
+				return done();
 			});
 		});
 
-		it('should return error on 404', function (done) {
-			request.get({ secure: true, hostname : 'github.com', path : '/brozeph/node-craigslist-nope' }, function (err, data) {
-				should.exist(err);
-				should.exist(err.statusCode);
-				err.statusCode.should.equal(404);
+		it('should return error on 404', (done) => {
+			nock(`https://${options.host}`)
+				.get(options.path)
+				.reply(404);
 
-				done();
+			request.get(options, function (err) {
+				should.exist(err);
+				should.exist(err.context);
+				should.exist(err.context.statusCode);
+				err.context.statusCode.should.equal(404);
+
+				return done();
 			});
 		});
 	});
-
 });

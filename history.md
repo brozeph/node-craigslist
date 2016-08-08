@@ -1,3 +1,8 @@
+# 1.0.0 / 2016.08.08
+
+* Moved to `eslint` instead of `jshint`
+* Modified code leveraging language features of `ES2015` and using `babel` to transpile
+
 # 0.1.9 / 2015.04.20
 
 * Merged excellent pull-request from @jbredice to enable search within categories
