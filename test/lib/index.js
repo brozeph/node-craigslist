@@ -128,7 +128,22 @@ describe('unit tests for node-craigslist', function () {
 				requestOptions.path.should.contain('ppa');
 
 				done();
-			})
+			});
+		});
+
+		// testing fix for #7
+		it('should properly allow override of base host', function (done) {
+			client
+				.search({ baseHost : 'craigslist.ca', city : 'toronto' }, 'washer')
+				.then((results) => {
+					should.exist(results);
+					should.exist(requestOptions);
+					should.exist(requestOptions.hostname);
+					requestOptions.hostname.should.equal('toronto.craigslist.ca');
+
+					return done();
+				})
+				.catch(done);
 		});
 	});
 });

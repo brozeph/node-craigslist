@@ -54,6 +54,21 @@ describe('functional tests for node-craigslist', function () {
 				})
 				.catch(done);
 		});
+
+		// integration test for #7
+		it('should properly search another country', function (done) {
+			client
+				.search({
+					city : 'montreal',
+					baseHost : 'craigslist.ca'},
+					'xbox')
+				.then((data) => {
+					should.exist(data);
+
+					done();
+				})
+				.catch(done);
+		});
 	});
 
 });

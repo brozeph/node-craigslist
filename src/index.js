@@ -8,7 +8,7 @@ import validation from './validation.js';
 import web from './web.js';
 
 let
-	baseHost = '.craigslist.org',
+	baseHost = 'craigslist.org',
 	debug = debugLog('craigslist'),
 	defaultRequestOptions = {
 		hostname : '',
@@ -105,8 +105,10 @@ function _getRequestOptions (options, query) {
 
 	// ensure default options are set, even if omitted from input options
 	requestOptions.hostname = [
-		(options.city || self.options.city || ''),
-		baseHost].join('');
+		validation.coalesce(options.city, self.options.city, ''),
+		// introducing fix for #7
+		validation.coalesce(options.baseHost, self.options.baseHost, baseHost)
+	].join('.');
 
 	// preserve any extraneous input option keys (may have addition instructions for underlying request object)
 	Object.keys(options).forEach(function (key) {

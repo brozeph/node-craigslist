@@ -14,7 +14,7 @@ npm install node-craigslist
 
 ## Usage
 
-The `#search` instance method optionally accepts a callback argument - when supplied, the `#search` function will execute the callback with two arguments (`err` and `results`). When omitted, the `#search` call will return a Promise.
+Methods optionally accept a callback argument - when supplied, the function will execute the callback with two arguments (`err` and `results`). When omitted, the method call will return a Promise.
 
 ### #search
 
@@ -22,7 +22,7 @@ This method can be used to search Craigslist for specific postings.
 
 **Usage:** `client.search(options, query, callback)`
 
-* `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for additional information
+* `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error
@@ -42,10 +42,13 @@ client
   .then((listings) => {
     // play with listings here...
     listings.forEach((listing) => console.log(listing));
+  })
+  .catch((err) => {
+    console.error(err);
   });
 ```
 
-### Advanced #search
+### Advanced Usage
 
 In order to filter by category and by price, check out the following example:
 
@@ -65,6 +68,10 @@ client
   .search(options, 'xbox one')
   .then((listings) => {
     // filtered listings (by price)
+    listings.forEach((listing) => console.log(listing));
+  })
+  .catch((err) => {
+    console.error(err);
   });
 ```
 
@@ -72,6 +79,7 @@ client
 
 Per request, options can be modified to specify the following:
 * a different city than whatever is specified during initialization
+* a different country than whatever is specified during initialization
 * min and max price ranges
 * category
 
@@ -82,8 +90,9 @@ var
     city : 'seattle'
   }),
   options = {
+    baseHost : '', // defaults to craigslist.org
     category : '', // defaults to sss (all)
-    city : 'boston',
+    city : '',
     maxAsk : '200',
     minAsk : '100'
   };
@@ -92,9 +101,10 @@ client
   .search(options, 'xbox one')
   .then((listings) => {
     // listings (from Boston instead of Seattle)
+    listings.forEach((listing) => console.log(listing));
   })
   .catch((err) => {
-    // if an error occurred...
+    console.error(err);
   });
 ```
 
