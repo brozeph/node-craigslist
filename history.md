@@ -2,6 +2,7 @@
 
 * Moved to `eslint` instead of `jshint`
 * Modified code leveraging language features of `ES2015` and using `babel` to transpile
+* Added `debug` dependency to enhance visibility and debugging of module
 
 # 0.1.9 / 2015.04.20
 

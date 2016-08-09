@@ -2,6 +2,7 @@
 
 import 'babel-polyfill';
 import 'source-map-support/register';
+import debugLog from 'debug';
 import events from 'events';
 import http from 'http';
 import https from 'https';
@@ -9,6 +10,7 @@ import url from 'url';
 import validation from './validation.js';
 
 const
+	debug = debugLog('craigslist'),
 	DEFAULT_MAX_REDIRECT_COUNT = 5,
 	DEFAULT_RETRY_COUNT = 3,
 	DEFAULT_TIMEOUT = 30000,
@@ -33,6 +35,7 @@ const
 		'hostname',
 		'json',
 		'localAddress',
+		'maxRetries',
 		'method',
 		'path',
 		'pathname',
@@ -43,26 +46,38 @@ const
 		'maxRetries',
 		'rawStream',
 		'secure',
-		'socketPath'],
+		'socketPath',
+		'timeout'],
 	SECURE_PROTOCOL_RE = /^https/i;
 
-function _augmentRequestOptions (options, settings) {
-	let augmented = {};
+function _augmentRequestOptions (options) {
+	let
+		augmented = {},
+		/*eslint no-invalid-this:0*/
+		self = this;
 
 	// ensure options exist
 	options = options || {};
 
 	// apply settings from Ctor
 	REQUEST_OPTIONS.forEach((field) => {
-		let value = validation.coalesce(options[field], settings[field]);
+		let value = validation.coalesce(options[field], self.settings[field]);
 
 		if (!validation.isEmpty(value)) {
+			debug(
+				'request %s will be set to %s (options = %s, settings = %s)',
+				field,
+				value,
+				options[field],
+				self.settings[field]);
 			augmented[field] = value;
 		}
 	});
 
 	// ensure maxRetries is applied if one is not supplied
-	augmented.maxRetries = augmented.maxRetries || DEFAULT_RETRY_COUNT;
+	augmented.maxRetries = validation.coalesce(
+		augmented.maxRetries,
+		DEFAULT_RETRY_COUNT);
 
 	// ensure rawStream setting is applied if not supplied
 	augmented.rawStream = validation.isEmpty(augmented.rawStream) ?
@@ -70,15 +85,15 @@ function _augmentRequestOptions (options, settings) {
 		augmented.rawStream;
 
 	// ensure default timeout is applied if one is not supplied
-	augmented.timeout = augmented.timeout || DEFAULT_TIMEOUT;
+	augmented.timeout = validation.coalesce(augmented.timeout, DEFAULT_TIMEOUT);
 
 	// create `path` from pathname and query.
-	augmented.path = augmented.path || augmented.pathname;
+	augmented.path = validation.coalesce(augmented.path, augmented.pathname);
 
 	return augmented;
 }
 
-function _exec (request, options, data, tryCount, callback) {
+function _exec (options, data, tryCount, callback) {
 	if (typeof data === 'function' && validation.isEmpty(callback)) {
 		callback = data;
 		/*eslint no-undefined:0*/
@@ -97,7 +112,9 @@ function _exec (request, options, data, tryCount, callback) {
 
 	let
 		exec,
-		redirectCount = 0;
+		redirectCount = 0,
+		/*eslint no-invalid-this:0*/
+		self = this;
 
 	exec = new Promise(function (resolve, reject) {
 		if (typeof data !== 'string') {
@@ -113,11 +130,12 @@ function _exec (request, options, data, tryCount, callback) {
 		}
 
 		// provide request event
-		if (request.emit) {
-			request.emit(EVENT_REQUEST, options);
+		if (self.emit) {
+			self.emit(EVENT_REQUEST, options);
 		}
 
 		let makeRequest = function () {
+			debug('establishing request with options: %o', options);
 			let req = (options.secure ? https : http).request(
 				options,
 				(res) => {
@@ -135,14 +153,16 @@ function _exec (request, options, data, tryCount, callback) {
 						].some((code) => (code === context.statusCode));
 
 					// provide response event (as there are response headers)
-					if (request.emit) {
-						request.emit(EVENT_RESPONSE, context);
+					if (self.emit) {
+						self.emit(EVENT_RESPONSE, context);
 					}
 
 					if (context.statusCode === HTTP_PROXY_REQUIRED) {
 						let err = new Error('proxy server configuration required');
 						err.options = options;
 						err.response = context;
+
+						debug('error: proxy server required: %o', err);
 
 						return reject(err);
 					}
@@ -154,6 +174,8 @@ function _exec (request, options, data, tryCount, callback) {
 							err.options = options;
 							err.response = context;
 
+							debug('error: missing redirect header: %o', err);
+
 							return reject(err);
 						}
 
@@ -161,6 +183,8 @@ function _exec (request, options, data, tryCount, callback) {
 							let err = new Error('maximum redirect limit exceeded');
 							err.options = options;
 							err.response = context;
+
+							debug('error: exceeded max number of redirects: %o', err);
 
 							return reject(err);
 						}
@@ -182,7 +206,9 @@ function _exec (request, options, data, tryCount, callback) {
 						redirectCount ++;
 
 						// emit redirect event
-						request.emit(EVENT_REDIRECT, options);
+						if (self.emit) {
+							self.emit(EVENT_REDIRECT, options);
+						}
 
 						// re-request based on the redirect location
 						return setImmediate(makeRequest);
@@ -196,8 +222,12 @@ function _exec (request, options, data, tryCount, callback) {
 							let err = new Error('resource not found');
 							err.context = context;
 
+							debug('error: unable to process response: %o', context.statusCode);
+
 							return reject(err);
 						}
+
+						debug('returning response as stream');
 
 						return resolve(res);
 					}
@@ -222,12 +252,17 @@ function _exec (request, options, data, tryCount, callback) {
 								err.body = body;
 								err.context = context;
 
+								debug('error: unable to parse JSON response: %o', err);
+
 								return reject(err);
 							}
 						}
 
 						// handle retry if error code is above threshhold
 						if (retry) {
+							debug(
+								'retry: response status code: %o',
+								context.statusCode);
 							tryCount += 1;
 							return makeRequest();
 						}
@@ -238,8 +273,12 @@ function _exec (request, options, data, tryCount, callback) {
 							err.body = body;
 							err.context = context;
 
+							debug('error: resource not found: %o', err);
+
 							return reject(err);
 						}
+
+						debug('successfully completed request');
 
 						// resolve the request as complete
 						return resolve(body || '');
@@ -247,8 +286,13 @@ function _exec (request, options, data, tryCount, callback) {
 				});
 
 			req.on('error', (err) => {
+				debug('error: unable to establish connection: %o', err);
+
 				// retry if below retry count threshhold
 				if (tryCount <= options.maxRetries) {
+					debug(
+						'retry: %d retries remaining',
+						options.maxRetries - tryCount);
 					tryCount += 1;
 					return makeRequest();
 				}
@@ -258,14 +302,13 @@ function _exec (request, options, data, tryCount, callback) {
 
 			// timeout the connection
 			if (options.timeout) {
-				req.setTimeout(options.timeout, () => {
-					console.log('TIMED OUT');
-					req.abort();
-				});
+				debug('setting timeout value to %o', options.timeout);
+				req.setTimeout(options.timeout, req.abort);
 			}
 
 			// write data to the connection
 			if (data) {
+				debug('writing %d bytes of data', options.headers['Content-Length']);
 				req.write(data);
 			}
 
@@ -287,42 +330,47 @@ export class Request extends events.EventEmitter {
 	}
 
 	delete (options, callback) {
-		options = _augmentRequestOptions(options, this.settings);
+		debug('performing DELETE');
+		options = this::_augmentRequestOptions(options);
 		options.method = 'DELETE';
 
-		return _exec(this, options, callback);
+		return this::_exec(options, callback);
 	}
 
 	get (options, callback) {
-		options = _augmentRequestOptions(options, this.settings);
+		debug('performing GET');
+		options = this::_augmentRequestOptions(options);
 		options.method = 'GET';
 
-		return _exec(this, options, callback);
+		return this::_exec(options, callback);
 	}
 
 	getRequestOptions (options) {
-		return _augmentRequestOptions(options, this.settings);
+		return this::_augmentRequestOptions(options);
 	}
 
 	head (options, callback) {
-		options = _augmentRequestOptions(options, this.settings);
+		debug('performing HEAD');
+		options = this::_augmentRequestOptions(options);
 		options.method = 'HEAD';
 
-		return _exec(this, options, callback);
+		return this::_exec(options, callback);
 	}
 
 	post (options, data, callback) {
-		options = _augmentRequestOptions(options, this.settings);
+		debug('performing POST');
+		options = this::_augmentRequestOptions(options);
 		options.method = 'POST';
 
-		return _exec(this, options, data, callback);
+		return this::_exec(options, data, callback);
 	}
 
 	put (options, data, callback) {
-		options = _augmentRequestOptions(options, this.settings);
+		debug('performing PUT');
+		options = this::_augmentRequestOptions(options);
 		options.method = 'PUT';
 
-		return _exec(this, options, data, callback);
+		return this::_exec(options, data, callback);
 	}
 }
 

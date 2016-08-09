@@ -21,7 +21,7 @@ To use it, it's as simple as the following example:
 ```javascript
 var
   craigslist = require('node-craigslist'),
-  client = craigslist({
+  client = new craigslist.Client({
     city : 'seattle'
   });
 
@@ -41,7 +41,7 @@ Do you want to filter by category and by price? Check out the following example:
 ```javascript
 var
   craigslist = require('node-craigslist'),
-  client = craigslist({
+  client = new craigslist.Client({
     city : 'seattle'
   }),
   options = {
@@ -65,7 +65,7 @@ Per request, options can be modified to specify the following:
 ```javascript
 var
   craigslist = require('node-craigslist'),
-  client = craigslist({
+  client = new craigslist.Client({
     city : 'seattle'
   }),
   options = {

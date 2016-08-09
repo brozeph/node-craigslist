@@ -79,27 +79,24 @@ describe('unit tests for request', () => {
 			});
 		});
 
-		/*
 		it('should obey timeout', (done) => {
 			nock(`https://${options.host}`)
 				.get(options.path)
-				.socketDelay(5000)
-				.reply(200);
+				.socketDelay(2000)
+				.reply(200, { testing : true });
 
-			options.timeout = 1000;
+			options.maxRetries = 0;
+			options.timeout = 500;
 
 			request.get(options, function (err, data) {
-				console.log(err);
-				console.log(data);
-
 				should.exist(err);
+				should.not.exist(data);
 				should.exist(err.code);
 				err.code.should.equal('ECONNRESET');
 
 				return done();
 			});
 		});
-		//*/
 
 		it('should return data', (done) => {
 			nock(`https://${options.host}`)
