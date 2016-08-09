@@ -10,26 +10,39 @@ var
 describe('unit tests for node-craigslist', function () {
 	'use strict';
 
-	var
+	let
 		client,
+		options = {},
 		requestOptions,
 		testMarkup = '<!DOCTYPE html><html><head></head><body class="toc search"><div class="content"><p class="row" data-pid="4355583965"> <span class="pl"> <time datetime="2015-04-07 23:31" title="Tue 07 Apr 11:31:09 PM (6 hours ago)">Apr 7</time> <a href="/see/vgm/4355583965.html" class="i" data-id="0:00P0P_8hKd1VlQDCd"></span><span class="price">&#x0024;250</span></a> <span class="star"></span> <span class="pl"> <span class="date">Mar  1</span>  <a href="/see/vgm/4355583965.html">NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE  </a> </span> <span class="l2"> <span class="price">&#x0024;250</span>  <span class="pnr"> <small> (renton)</small> <span class="px"> <span class="p"> pic</span></span> </span>  <a class="gc" href="/vgm/" data-cat="vgm">video gaming - by owner</a> </span> </p> <p class="row" data-latitude="47.6889961595583" data-longitude="-122.321962887269" data-pid="4357055000"> <a href="/see/vgm/4357055000.html" class="i" data-id="0:00d0d_hYKRHRR9Pse"><span class="price">&#x0024;500</span></a> <span class="star"></span> <span class="pl"> <span class="date">Mar  2</span>  <a href="/see/vgm/4357055000.html">Xbox One - Day One Edition (BRAND NEW &amp; SEALED)</a> </span> <span class="l2"> <span class="price">&#x0024;500</span>  <span class="pnr"> <small> (Maple Leaf)</small> <span class="px"> <span class="p"> pic&nbsp;<a href="#" class="maptag" data-pid="4357055000">map</a></span></span> </span>  <a class="gc" href="/vgm/" data-cat="vgm">video gaming - by owner</a> </span> </p> </div></body></html>';
 
 	beforeEach(function () {
-		client = new craigslist.Client({
-			city : 'seattle'
-		});
+		options = {
+			city : 'seattle',
+			hostname : 'test.brozeph.com',
+			secure : true
+		};
+
+		client = new craigslist.Client(options);
 
 		client.request.get = function (options, callback) {
 			requestOptions = options;
-			return callback(null, testMarkup);
+
+			if (callback) {
+				return callback(null, testMarkup);
+			}
+
+			return Promise.resolve(testMarkup);
 		};
 	});
 
 	describe('#search', function () {
 		it('should properly search without options', function (done) {
 			client.search('xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 				should.exist(requestOptions.hostname);
 				requestOptions.path.should.contain('query=xbox');
@@ -38,9 +51,25 @@ describe('unit tests for node-craigslist', function () {
 			});
 		});
 
+		it('should properly search without options (Promise)', function (done) {
+			client
+				.search('xbox')
+				.then((data) => {
+					should.exist(data);
+					should.exist(requestOptions.hostname);
+					requestOptions.path.should.contain('query=xbox');
+
+					return done();
+				})
+				.catch(done);
+		});
+
 		it('should properly search and use options to override', function (done) {
 			client.search({ city : 'spokane' }, 'xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 				should.exist(requestOptions.hostname);
 				requestOptions.hostname.should.contain('spokane');
@@ -52,7 +81,10 @@ describe('unit tests for node-craigslist', function () {
 
 		it('should properly search and use options to override', function (done) {
 			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 				should.exist(requestOptions.hostname);
 				requestOptions.hostname.should.contain('seattle');
@@ -66,7 +98,10 @@ describe('unit tests for node-craigslist', function () {
 
 		it('should properly parse markup', function (done) {
 			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 				data.should.have.length(2);
 
@@ -85,7 +120,10 @@ describe('unit tests for node-craigslist', function () {
 
 		it('should properly accept category', function (done) {
 			client.search({ category : 'ppa' }, 'washer', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 				requestOptions.path.should.contain('ppa');
 
@@ -93,5 +131,4 @@ describe('unit tests for node-craigslist', function () {
 			})
 		});
 	});
-
 });

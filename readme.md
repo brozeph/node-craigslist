@@ -1,6 +1,6 @@
 # Craigslist Search Driver
 
-This module makes for simple retrieval of search results from Craigslist.com!
+This module makes for simple retrieval of search results from Craigslist!
 
 [![Build Status](https://travis-ci.org/brozeph/node-craigslist.png)](https://travis-ci.org/brozeph/node-craigslist)
 [![Coverage Status](https://coveralls.io/repos/brozeph/node-craigslist/badge.png?branch=master)](https://coveralls.io/r/brozeph/node-craigslist?branch=master)
@@ -14,7 +14,19 @@ npm install node-craigslist
 
 ## Usage
 
-### Search
+The `#search` instance method optionally accepts a callback argument - when supplied, the `#search` function will execute the callback with two arguments (`err` and `results`). When omitted, the `#search` call will return a Promise.
+
+### #search
+
+This method can be used to search Craigslist for specific postings.
+
+**Usage:** `client.search(options, query, callback)`
+
+* `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for additional information
+* `query` - _(required)_ - a string query to search with
+* `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
+  * `err` - populated with details in the event of an error
+  * `result` - result set details
 
 To use it, it's as simple as the following example:
 
@@ -25,18 +37,17 @@ var
     city : 'seattle'
   });
 
-client.search('xbox one', function (err, listings) {
-  // play with listings here...
-  listings.forEach(function (listing) {
-    console.log(listing);
+client
+  .search('xbox one')
+  .then((listings) => {
+    // play with listings here...
+    listings.forEach((listing) => console.log(listing));
   });
-});
-
 ```
 
-### Advanced Search
+### Advanced #search
 
-Do you want to filter by category and by price? Check out the following example:
+In order to filter by category and by price, check out the following example:
 
 ```javascript
 var
@@ -50,9 +61,11 @@ var
     minAsk : '100'
   };
 
-client.search(options, 'xbox one', function (err, listings) {
-  // filtered listings (by price)
-});
+client
+  .search(options, 'xbox one')
+  .then((listings) => {
+    // filtered listings (by price)
+  });
 ```
 
 ### Options
@@ -75,9 +88,14 @@ var
     minAsk : '100'
   };
 
-client.search(options, 'xbox one', function (err, listings) {
-  // listings (from Boston instead of Seattle)
-});
+client
+  .search(options, 'xbox one')
+  .then((listings) => {
+    // listings (from Boston instead of Seattle)
+  })
+  .catch((err) => {
+    // if an error occurred...
+  });
 ```
 
 #### Categories

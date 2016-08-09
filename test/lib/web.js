@@ -21,7 +21,7 @@ describe('unit tests for request', () => {
 
 	beforeEach(() => {
 		options = {
-			host : 'test.playnetwork.com',
+			host : 'test.brozeph.com',
 			path : '/',
 			secure : true
 		};

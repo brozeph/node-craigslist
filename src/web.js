@@ -329,16 +329,18 @@ export class Request extends events.EventEmitter {
 		this.settings = settings || {};
 	}
 
+	/*
 	delete (options, callback) {
-		debug('performing DELETE');
+		debug('performing DELETE (%o)', options);
 		options = this::_augmentRequestOptions(options);
 		options.method = 'DELETE';
 
 		return this::_exec(options, callback);
 	}
+	//*/
 
 	get (options, callback) {
-		debug('performing GET');
+		debug('performing GET (%o)', options);
 		options = this::_augmentRequestOptions(options);
 		options.method = 'GET';
 
@@ -349,29 +351,35 @@ export class Request extends events.EventEmitter {
 		return this::_augmentRequestOptions(options);
 	}
 
+	/*
 	head (options, callback) {
-		debug('performing HEAD');
+		debug('performing HEAD (%o)', options);
 		options = this::_augmentRequestOptions(options);
 		options.method = 'HEAD';
 
 		return this::_exec(options, callback);
 	}
+	//*/
 
+	/*
 	post (options, data, callback) {
-		debug('performing POST');
+		debug('performing POST (%o)', options);
 		options = this::_augmentRequestOptions(options);
 		options.method = 'POST';
 
 		return this::_exec(options, data, callback);
 	}
+	//*/
 
+	/*
 	put (options, data, callback) {
-		debug('performing PUT');
+		debug('performing PUT (%o)', options);
 		options = this::_augmentRequestOptions(options);
 		options.method = 'PUT';
 
 		return this::_exec(options, data, callback);
 	}
+	//*/
 }
 
 export default { Request }

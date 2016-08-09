@@ -3,10 +3,13 @@
 import 'babel-polyfill';
 import 'source-map-support/register';
 import cheerio from 'cheerio';
+import debugLog from 'debug';
+import validation from './validation.js';
 import web from './web.js';
 
 let
 	baseHost = '.craigslist.org',
+	debug = debugLog('craigslist'),
 	defaultRequestOptions = {
 		hostname : '',
 		path : '',
@@ -19,62 +22,66 @@ let
 
 /**
  * Accepts string of HTML and parses that string to find all pertinent listings.
-
- * @param {object} options - Input options for the web request
+ *
+ * @param {object} options - Request options used for the request to craigslist
  * @param {string} html - Markup from the request to Craigslist
  * @returns {Array} listings - The processed and normalized array of listings
  **/
 function _getListings (options, html) {
-	var
+	let
 		$ = cheerio.load(html),
+		hostname = options.hostname,
 		listing = {},
-		listings = [];
+		listings = [],
+		secure = options.secure;
 
-	$('div.content').find('p.row').each(function (i, element) {
-		listing = {
-			category : $(element)
-				.find('span.l2 a.gc')
-				.text(),
-			coordinates : {
-				lat : $(element).attr('data-latitude'),
-				lon : $(element).attr('data-longitude')
-			},
-			date : $(element)
-				.find('span.pl time')
-				.attr('datetime'),
-			hasPic : ($(element)
-				.find('span.l2 span.p')
-				.text()
-				.trim()) !== '',
-			location : $(element)
-				.find('span.pnr small')
-				.text()
-				.replace(/[\(,\)]/g, ''), // santize
-			pid : $(element)
-				.attr('data-pid'),
-			price : $(element)
-				.find('span.l2 span.price')
-				.text()
-				.replace(/^\&\#x0024\;/g, ''), // sanitize
-			title : $(element)
-				.find('span.pl a')
-				.text(),
-			url :
-				(options.secure ? 'https://' : 'http://') +
-				options.hostname +
-				$(element)
+	$('div.content')
+		.find('p.row')
+		.each(function (i, element) {
+			listing = {
+				category : $(element)
+					.find('span.l2 a.gc')
+					.text(),
+				coordinates : {
+					lat : $(element).attr('data-latitude'),
+					lon : $(element).attr('data-longitude')
+				},
+				date : $(element)
+					.find('span.pl time')
+					.attr('datetime'),
+				hasPic : ($(element)
+					.find('span.l2 span.p')
+					.text()
+					.trim()) !== '',
+				location : $(element)
+					.find('span.pnr small')
+					.text()
+					.replace(/[\(,\)]/g, ''), // santize
+				pid : $(element)
+					.attr('data-pid'),
+				price : $(element)
+					.find('span.l2 span.price')
+					.text()
+					.replace(/^\&\#x0024\;/g, ''), // sanitize
+				title : $(element)
 					.find('span.pl a')
-					.attr('href')
-		};
+					.text(),
+				url : [
+					(secure ? 'https://' : 'http://'),
+					hostname,
+					$(element)
+						.find('span.pl a')
+						.attr('href')].join('')
+			};
 
-		// make sure lat / lon is valid
-		if (typeof listing.coordinates.lat === 'undefined' ||
-			typeof listing.coordinates.lon === 'undefined') {
-			delete listing.coordinates;
-		}
+			// make sure lat / lon is valid
+			if (typeof listing.coordinates.lat === 'undefined' ||
+				typeof listing.coordinates.lon === 'undefined') {
+				delete listing.coordinates;
+			}
 
-		listings.push(listing);
-	});
+			listings.push(listing);
+		});
 
 	return listings;
 }
@@ -86,17 +93,19 @@ function _getListings (options, html) {
  * in initialization options, uses the default options setting. All keys provided in
  * the input options variable are retained.
  *
- * @param {Client} client - An instance of the Client class
  * @param {object} options - Input options for the web request
  * @param {string} query - A querystring
  * @returns {object} options - The coalesced result of options
  **/
-function _getRequestOptions (client, options, query) {
-	var requestOptions = JSON.parse(JSON.stringify(defaultRequestOptions));
+function _getRequestOptions (options, query) {
+	var
+		requestOptions = JSON.parse(JSON.stringify(defaultRequestOptions)),
+		/*eslint no-invalid-this:0*/
+		self = this;
 
 	// ensure default options are set, even if omitted from input options
 	requestOptions.hostname = [
-		(options.city || client.options.city || ''),
+		(options.city || self.options.city || ''),
 		baseHost].join('');
 
 	// preserve any extraneous input option keys (may have addition instructions for underlying request object)
@@ -132,6 +141,8 @@ function _getRequestOptions (client, options, query) {
 		requestOptions.path += searchMaxAsk + options.maxAsk;
 	}
 
+	debug('setting request options: %o', requestOptions);
+
 	return requestOptions;
 }
 
@@ -142,33 +153,7 @@ export class Client {
 	}
 
 	/*
-		options = {
-			city : '',
-			category : '',
-			maxAsk : '',
-			minAsk : '',
-		}
-	*/
-	search (options, query, callback) {
-		let self = this;
-
-		if (typeof query === 'function' && typeof callback === 'undefined') {
-			callback = query;
-			query = options;
-			options = {};
-		}
-
-		options = _getRequestOptions(self, options, query);
-
-		self.request.get(options, function (err, data) {
-			if (err) {
-				return callback(err);
-			}
-
-			return callback(null, _getListings(options, data));
-		});
-	}
-
+	// Commented out for now - not unit tested...
 	list (options, callback) {
 		let self = this;
 
@@ -177,15 +162,52 @@ export class Client {
 			options = {};
 		}
 
-		options = _getRequestOptions(self, options);
+		options = self::_getRequestOptions(options);
 
 		self.request.get(options, function (err, data) {
 			if (err) {
 				return callback(err);
 			}
 
-			return callback(null, _getListings(options, data));
+			return callback(null, self::_getListings(options, data));
 		});
+	}
+	//*/
+
+	search (options, query, callback) {
+		if (typeof query === 'function' && typeof callback === 'undefined') {
+			callback = query;
+			query = options;
+			options = {};
+		}
+
+		if (typeof query === 'undefined' && typeof options === 'string') {
+			query = options;
+			options = {};
+		}
+
+		let
+			exec,
+			self = this;
+
+		// remap options for the request
+		options = this::_getRequestOptions(options, query);
+
+		// create a Promise to execute the request
+		exec = new Promise((resolve, reject) => {
+			return self.request
+				.get(options)
+				.then((data) => {
+					let listings = _getListings(options, data);
+					debug('found %d listings', listings.length);
+
+					return resolve(listings);
+				})
+				.catch(reject);
+		});
+
+		// execute!
+		return validation.promiseOrCallback(exec, callback);
 	}
 }
 

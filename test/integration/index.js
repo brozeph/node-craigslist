@@ -1,4 +1,5 @@
 /*eslint no-magic-numbers:0*/
+/*eslint no-unused-expressions:0*/
 var
 	chai = require('chai'),
 
@@ -30,9 +31,7 @@ describe('functional tests for node-craigslist', function () {
 				done();
 			});
 		});
-	});
 
-	describe('#search', function () {
 		it('should properly search with options', function (done) {
 			client.search({ city : 'spokane' }, 'xbox', function (err, data) {
 				should.not.exist(err);
@@ -41,16 +40,19 @@ describe('functional tests for node-craigslist', function () {
 				done();
 			});
 		});
-	});
 
-	describe('#search', function () {
-		it('should properly search with minAsk and maxAsk', function (done) {
-			client.search({ maxAsk : '200', minAsk : '100' }, 'xbox', function (err, data) {
-				should.not.exist(err);
-				should.exist(data);
+		it('should properly search with minAsk and maxAsk (Promise)', function (done) {
+			client
+				.search({ maxAsk : '200', minAsk : '100' }, 'xbox')
+				.then((data) => {
+					should.exist(data);
+					should.exist(data[0]);
+					should.exist(data[0].title);
+					/xbox/i.test(data[0].title).should.be.true;
 
-				done();
-			});
+					return done();
+				})
+				.catch(done);
 		});
 	});
 
