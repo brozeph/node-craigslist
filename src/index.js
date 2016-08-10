@@ -3,8 +3,8 @@
 import 'babel-polyfill';
 import 'source-map-support/register';
 import cheerio from 'cheerio';
+import core from './core.js';
 import debugLog from 'debug';
-import validation from './validation.js';
 import web from './web.js';
 
 const
@@ -134,9 +134,9 @@ function _getRequestOptions (options, query) {
 
 	// ensure default options are set, even if omitted from input options
 	requestOptions.hostname = [
-		validation.coalesce(options.city, self.options.city, ''),
+		core.Validation.coalesce(options.city, self.options.city, ''),
 		// introducing fix for #7
-		validation.coalesce(
+		core.Validation.coalesce(
 			options.baseHost,
 			self.options.baseHost,
 			DEFAULT_BASE_HOST)
@@ -147,27 +147,27 @@ function _getRequestOptions (options, query) {
 		.keys(options)
 		.forEach((key) => {
 			if (!QUERY_KEYS.indexOf(key) &&
-				validation.isEmpty(requestOptions[key]) &&
-				validation.isEmpty(DEFAULT_REQUEST_OPTIONS[key])) {
+				core.Validation.isEmpty(requestOptions[key]) &&
+				core.Validation.isEmpty(DEFAULT_REQUEST_OPTIONS[key])) {
 				requestOptions[key] = options[key];
 			}
 		});
 
 	// setup path
-	if (validation.isEmpty(requestOptions.path)) {
+	if (core.Validation.isEmpty(requestOptions.path)) {
 		requestOptions.path = DEFAULT_PATH;
 	}
 
 	// setup category
 	requestOptions.path = [
 		requestOptions.path,
-		validation.coalesce(options.category, DEFAULT_CATEGORY)].join('');
+		core.Validation.coalesce(options.category, DEFAULT_CATEGORY)].join('');
 
 	// setup querystring
 	requestOptions.path = [requestOptions.path, DEFAULT_QUERYSTRING].join('');
 
 	// add search query (if specified)
-	if (!validation.isEmpty(query)) {
+	if (!core.Validation.isEmpty(query)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_QUERY,
@@ -175,7 +175,7 @@ function _getRequestOptions (options, query) {
 	}
 
 	// add min asking price (if specified)
-	if (!validation.isEmpty(options.minAsk)) {
+	if (!core.Validation.isEmpty(options.minAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MIN,
@@ -183,7 +183,7 @@ function _getRequestOptions (options, query) {
 	}
 
 	// add max asking price (if specified)
-	if (!validation.isEmpty(options.maxAsk)) {
+	if (!core.Validation.isEmpty(options.maxAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MAX,
@@ -224,13 +224,13 @@ export class Client {
 	//*/
 
 	search (options, query, callback) {
-		if (typeof query === 'function' && validation.isEmpty(callback)) {
+		if (typeof query === 'function' && core.Validation.isEmpty(callback)) {
 			callback = query;
 			query = options;
 			options = {};
 		}
 
-		if (validation.isEmpty(query) && typeof options === 'string') {
+		if (core.Validation.isEmpty(query) && typeof options === 'string') {
 			query = options;
 			options = {};
 		}
@@ -256,7 +256,7 @@ export class Client {
 		});
 
 		// execute!
-		return validation.promiseOrCallback(exec, callback);
+		return core.Validation.promiseOrCallback(exec, callback);
 	}
 }
 

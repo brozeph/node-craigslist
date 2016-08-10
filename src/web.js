@@ -2,12 +2,12 @@
 
 import 'babel-polyfill';
 import 'source-map-support/register';
+import core from './core.js';
 import debugLog from 'debug';
 import events from 'events';
 import http from 'http';
 import https from 'https';
 import url from 'url';
-import validation from './validation.js';
 
 const
 	debug = debugLog('craigslist'),
@@ -61,9 +61,9 @@ function _augmentRequestOptions (options) {
 
 	// apply settings from Ctor
 	REQUEST_OPTIONS.forEach((field) => {
-		let value = validation.coalesce(options[field], self.settings[field]);
+		let value = core.Validation.coalesce(options[field], self.settings[field]);
 
-		if (!validation.isEmpty(value)) {
+		if (!core.Validation.isEmpty(value)) {
 			debug(
 				'request %s will be set to %s (options = %s, settings = %s)',
 				field,
@@ -75,33 +75,33 @@ function _augmentRequestOptions (options) {
 	});
 
 	// ensure maxRetries is applied if one is not supplied
-	augmented.maxRetries = validation.coalesce(
+	augmented.maxRetries = core.Validation.coalesce(
 		augmented.maxRetries,
 		DEFAULT_RETRY_COUNT);
 
 	// ensure rawStream setting is applied if not supplied
-	augmented.rawStream = validation.isEmpty(augmented.rawStream) ?
+	augmented.rawStream = core.Validation.isEmpty(augmented.rawStream) ?
 		false :
 		augmented.rawStream;
 
 	// ensure default timeout is applied if one is not supplied
-	augmented.timeout = validation.coalesce(augmented.timeout, DEFAULT_TIMEOUT);
+	augmented.timeout = core.Validation.coalesce(augmented.timeout, DEFAULT_TIMEOUT);
 
 	// create `path` from pathname and query.
-	augmented.path = validation.coalesce(augmented.path, augmented.pathname);
+	augmented.path = core.Validation.coalesce(augmented.path, augmented.pathname);
 
 	return augmented;
 }
 
 function _exec (options, data, tryCount, callback) {
-	if (typeof data === 'function' && validation.isEmpty(callback)) {
+	if (typeof data === 'function' && core.Validation.isEmpty(callback)) {
 		callback = data;
 		/*eslint no-undefined:0*/
 		data = undefined;
 		tryCount = FIRST_TRY;
 	}
 
-	if (typeof tryCount === 'function' && validation.isEmpty(callback)) {
+	if (typeof tryCount === 'function' && core.Validation.isEmpty(callback)) {
 		callback = tryCount;
 		tryCount = FIRST_TRY;
 	}
@@ -169,7 +169,7 @@ function _exec (options, data, tryCount, callback) {
 
 					// check for HTTP redirect
 					if (redirect) {
-						if (validation.isEmpty(context.headers.location)) {
+						if (core.Validation.isEmpty(context.headers.location)) {
 							let err = new Error('redirect requested with no location');
 							err.options = options;
 							err.response = context;
@@ -320,7 +320,7 @@ function _exec (options, data, tryCount, callback) {
 		makeRequest();
 	});
 
-	return validation.promiseOrCallback(exec, callback);
+	return core.Validation.promiseOrCallback(exec, callback);
 }
 
 export class Request extends events.EventEmitter {
