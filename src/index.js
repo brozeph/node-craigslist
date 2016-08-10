@@ -7,18 +7,27 @@ import debugLog from 'debug';
 import validation from './validation.js';
 import web from './web.js';
 
-let
-	baseHost = 'craigslist.org',
+const
 	debug = debugLog('craigslist'),
-	defaultRequestOptions = {
+	DEFAULT_BASE_HOST = 'craigslist.org',
+	DEFAULT_CATEGORY = 'sss',
+	DEFAULT_PATH = '/search/',
+	DEFAULT_QUERYSTRING = '?sort=rel',
+	DEFAULT_REQUEST_OPTIONS = {
 		hostname : '',
 		path : '',
 		secure : true
 	},
-	searchMaxAsk = '&maxAsk=',
-	searchMinAsk = '&minAsk=',
-	searchPath = '/search/sss?sort=rel&query=',
-	listPath = '/search/sss?sort=date';
+	QUERY_KEYS = [
+		'category',
+		'maxAsk',
+		'minAsk',
+		'query'
+	],
+	QUERY_PARAM_MAX = '&maxAsk=',
+	QUERY_PARAM_MIN = '&minAsk=',
+	QUERY_PARAM_QUERY = '&query=',
+	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i;
 
 /**
  * Accepts string of HTML and parses that string to find all pertinent listings.
@@ -38,6 +47,26 @@ function _getListings (options, html) {
 	$('div.content')
 		.find('p.row')
 		.each(function (i, element) {
+			let detailsUrl = $(element)
+				.find('span.pl a')
+				.attr('href');
+
+			// introducing fix for #6
+			if (!RE_QUALIFIED_URL.test(detailsUrl)) {
+				detailsUrl = [
+					(secure ? 'https://' : 'http://'),
+					hostname,
+					detailsUrl].join('');
+
+				debug('adjusted URL for listing to (%s)', detailsUrl);
+			} else {
+				detailsUrl = [
+					(secure ? 'https:' : 'http:'),
+					detailsUrl].join('');
+
+				debug('adjusted URL for listing to (%s)', detailsUrl);
+			}
+
 			listing = {
 				category : $(element)
 					.find('span.l2 a.gc')
@@ -46,32 +75,32 @@ function _getListings (options, html) {
 					lat : $(element).attr('data-latitude'),
 					lon : $(element).attr('data-longitude')
 				},
-				date : $(element)
+				date : ($(element)
 					.find('span.pl time')
-					.attr('datetime'),
+					.attr('datetime') || '')
+						.trim(),
 				hasPic : ($(element)
 					.find('span.l2 span.p')
-					.text()
-					.trim()) !== '',
-				location : $(element)
+					.text() || '')
+						.trim() !== '',
+				location : ($(element)
 					.find('span.pnr small')
-					.text()
-					.replace(/[\(,\)]/g, ''), // santize
-				pid : $(element)
-					.attr('data-pid'),
-				price : $(element)
+					.text() || '')
+						.replace(/[\(,\)]/g, '') // santize
+						.trim(),
+				pid : ($(element)
+					.attr('data-pid') || '')
+						.trim(),
+				price : ($(element)
 					.find('span.l2 span.price')
-					.text()
-					.replace(/^\&\#x0024\;/g, ''), // sanitize
-				title : $(element)
+					.text() || '')
+						.replace(/^\&\#x0024\;/g, '')
+						.trim(), // sanitize
+				title : ($(element)
 					.find('span.pl a')
-					.text(),
-				url : [
-					(secure ? 'https://' : 'http://'),
-					hostname,
-					$(element)
-						.find('span.pl a')
-						.attr('href')].join('')
+					.text() || '')
+						.trim(),
+				url : detailsUrl
 			};
 
 			// make sure lat / lon is valid
@@ -99,7 +128,7 @@ function _getListings (options, html) {
  **/
 function _getRequestOptions (options, query) {
 	var
-		requestOptions = JSON.parse(JSON.stringify(defaultRequestOptions)),
+		requestOptions = JSON.parse(JSON.stringify(DEFAULT_REQUEST_OPTIONS)),
 		/*eslint no-invalid-this:0*/
 		self = this;
 
@@ -107,40 +136,58 @@ function _getRequestOptions (options, query) {
 	requestOptions.hostname = [
 		validation.coalesce(options.city, self.options.city, ''),
 		// introducing fix for #7
-		validation.coalesce(options.baseHost, self.options.baseHost, baseHost)
+		validation.coalesce(
+			options.baseHost,
+			self.options.baseHost,
+			DEFAULT_BASE_HOST)
 	].join('.');
 
 	// preserve any extraneous input option keys (may have addition instructions for underlying request object)
-	Object.keys(options).forEach(function (key) {
-		if (key !== 'maxAsk' &&
-			key !== 'minAsk' &&
-			key !== 'category' &&
-			typeof requestOptions[key] === 'undefined' &&
-			typeof defaultRequestOptions[key] === 'undefined') {
-			requestOptions[key] = options[key];
-		}
-	});
+	Object
+		.keys(options)
+		.forEach((key) => {
+			if (!QUERY_KEYS.indexOf(key) &&
+				validation.isEmpty(requestOptions[key]) &&
+				validation.isEmpty(DEFAULT_REQUEST_OPTIONS[key])) {
+				requestOptions[key] = options[key];
+			}
+		});
 
-	// add category
-	if (typeof options.category !== 'undefined') {
-		searchPath = searchPath.replace('sss', options.category);
-		listPath = listPath.replace('sss', options.category);
+	// setup path
+	if (validation.isEmpty(requestOptions.path)) {
+		requestOptions.path = DEFAULT_PATH;
 	}
 
-	// set path
-	if (typeof query !== 'undefined') {
-		requestOptions.path = searchPath + encodeURIComponent(query);
-	} else {
-		requestOptions.path = listPath;
+	// setup category
+	requestOptions.path = [
+		requestOptions.path,
+		validation.coalesce(options.category, DEFAULT_CATEGORY)].join('');
+
+	// setup querystring
+	requestOptions.path = [requestOptions.path, DEFAULT_QUERYSTRING].join('');
+
+	// add search query (if specified)
+	if (!validation.isEmpty(query)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_QUERY,
+			encodeURIComponent(query)].join('');
 	}
 
-	// add min and max asking price
-	if (typeof options.minAsk !== 'undefined') {
-		requestOptions.path += searchMinAsk + options.minAsk;
+	// add min asking price (if specified)
+	if (!validation.isEmpty(options.minAsk)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN,
+			options.minAsk].join('');
 	}
 
-	if (typeof options.maxAsk !== 'undefined') {
-		requestOptions.path += searchMaxAsk + options.maxAsk;
+	// add max asking price (if specified)
+	if (!validation.isEmpty(options.maxAsk)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX,
+			options.maxAsk].join('');
 	}
 
 	debug('setting request options: %o', requestOptions);
@@ -177,13 +224,13 @@ export class Client {
 	//*/
 
 	search (options, query, callback) {
-		if (typeof query === 'function' && typeof callback === 'undefined') {
+		if (typeof query === 'function' && validation.isEmpty(callback)) {
 			callback = query;
 			query = options;
 			options = {};
 		}
 
-		if (typeof query === 'undefined' && typeof options === 'string') {
+		if (validation.isEmpty(query) && typeof options === 'string') {
 			query = options;
 			options = {};
 		}

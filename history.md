@@ -3,6 +3,8 @@
 * Moved to `eslint` instead of `jshint`
 * Modified code leveraging language features of `ES2015` and using `babel` to transpile
 * Added `debug` dependency to enhance visibility and debugging of module
+* Fixed issue #6 - other city links were incorrectly specified
+* Fixed issue #7 - unable to specify base host for other countries
 
 # 0.1.9 / 2015.04.20
 
