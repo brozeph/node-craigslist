@@ -201,27 +201,10 @@ export class Client {
 		this.request = new web.Request(this.options);
 	}
 
-	/*
-	// Commented out for now - not unit tested...
 	list (options, callback) {
-		let self = this;
-
-		if (typeof options === 'function' && typeof callback === 'undefined') {
-			callback = options;
-			options = {};
-		}
-
-		options = self::_getRequestOptions(options);
-
-		self.request.get(options, function (err, data) {
-			if (err) {
-				return callback(err);
-			}
-
-			return callback(null, self::_getListings(options, data));
-		});
+		/*eslint no-undefined:0*/
+		return this.search(options, undefined, callback);
 	}
-	//*/
 
 	search (options, query, callback) {
 		if (typeof query === 'function' && core.Validation.isEmpty(callback)) {
