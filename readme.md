@@ -16,6 +16,64 @@ npm install node-craigslist
 
 Methods optionally accept a callback argument - when supplied, the function will execute the callback with two arguments (`err` and `results`). When omitted, the method call will return a Promise.
 
+### Constructor
+
+When constructing the craigslist client, options specified are used for all subsequent requests (i.e. [#list](#list) and [#search](#search)).
+
+**Usage:** `new craigslist.Client(options)`
+
+* `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
+  * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required by [#list](#list) and [#search](#search) when not specified in the constructor_)
+  * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
+  * `maxAsk` - _(optional)_ - maximum price
+  * `minAsk` - _(optional)_ - minimum price
+  * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+
+```javascript
+const craigslist = require('node-craigslist');
+
+let client = new craigslist.Client({
+  baseHost : 'craigslist.ca',
+  city : 'Toronto'
+});
+```
+
+### #list
+
+This method can be used to grab a listing of Craigslist postings.
+
+**Usage:** `client.list(options, callback)`
+
+* `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
+  * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
+  * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
+  * `maxAsk` - _(optional)_ - maximum price
+  * `minAsk` - _(optional)_ - minimum price
+  * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+* `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
+  * `err` - populated with details in the event of an error
+  * `result` - result set details
+
+To use it, it's as simple as the following example:
+
+```javascript
+var
+  craigslist = require('node-craigslist'),
+  client = new craigslist.Client({
+    city : 'seattle'
+  });
+
+client
+  .list()
+  .then((listings) => {
+    // play with listings here...
+    listings.forEach((listing) => console.log(listing));
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+```
+
 ### #search
 
 This method can be used to search Craigslist for specific postings.
@@ -23,6 +81,11 @@ This method can be used to search Craigslist for specific postings.
 **Usage:** `client.search(options, query, callback)`
 
 * `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
+  * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
+  * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
+  * `maxAsk` - _(optional)_ - maximum price
+  * `minAsk` - _(optional)_ - minimum price
+  * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error
@@ -48,9 +111,7 @@ client
   });
 ```
 
-### Advanced Usage
-
-In order to filter by category and by price, check out the following example:
+In order to search and filter by category and by price, check out the following example:
 
 ```javascript
 var
