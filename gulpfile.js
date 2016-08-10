@@ -17,7 +17,7 @@ gulp.task('build', ['clean'], () => {
 			.src('src/**/*.js')
 			.pipe(sourcemaps.init())
 			.pipe(babel({
-				presets: ['es2015', 'stage-0']
+				presets : ['es2015', 'stage-0']
 			}))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest('dist'));
