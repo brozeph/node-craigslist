@@ -78,10 +78,10 @@ client
 ### Options
 
 Per request, options can be modified to specify the following:
-* a different city than whatever is specified during initialization
-* a different country than whatever is specified during initialization
-* min and max price ranges
-* category
+* a different city than whatever is specified during initialization (`city` option)
+* a different country than whatever is specified during initialization (`baseHost` option)
+* min and max price ranges (`maxAsk` and `minAsk` options)
+* category (`category` option)
 
 ```javascript
 var
