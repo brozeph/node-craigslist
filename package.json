@@ -13,7 +13,7 @@
     "type": "git",
     "url": "ssh://git@github.org:brozeph/node-craigslist.git"
   },
-  "main": "./lib",
+  "main": "./dist",
   "scripts": {
     "prepublish": "gulp build",
     "test": "gulp lint && gulp test-integration && gulp test-coverage"
