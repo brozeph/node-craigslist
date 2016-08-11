@@ -11,7 +11,7 @@ var
 describe('unit tests for request', () => {
 	'use strict';
 
-	let
+	var
 		options,
 		request;
 

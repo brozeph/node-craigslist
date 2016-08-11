@@ -11,7 +11,9 @@ var
 describe('functional tests for node-craigslist', function () {
 	'use strict';
 
-	var client;
+	var
+		client,
+		examplePosting;
 
 	/*eslint no-invalid-this:0*/
 	this.timeout(10000);
@@ -64,6 +66,9 @@ describe('functional tests for node-craigslist', function () {
 					'xbox')
 				.then((data) => {
 					should.exist(data);
+					should.exist(data[0]);
+
+					examplePosting = data[0];
 
 					done();
 				})
@@ -71,4 +76,33 @@ describe('functional tests for node-craigslist', function () {
 		});
 	});
 
+	describe('#details', function () {
+		it('should properly get posting details with URL', function (done) {
+			let url = 'https://seattle.craigslist.org/see/msg/5711739353.html';
+			client.details(url, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				should.exist(data.title);
+				should.exist(data.pid);
+
+				return done();
+			});
+		});
+
+		it('should properly get posting details with posting (Promise)', function (done) {
+			client
+				.details(examplePosting)
+				.then((data) => {
+					should.exist(data);
+					should.exist(data.title);
+					should.exist(data.pid);
+
+					return done();
+				})
+				.catch(done);
+		});
+	});
 });

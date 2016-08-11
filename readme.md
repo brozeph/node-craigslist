@@ -74,6 +74,24 @@ client
   });
 ```
 
+Example response:
+
+```javascript
+[
+  {
+    pid: '1234567890',
+    category: 'video gaming - by owner',
+    date: 'Mar  1',
+    hasPic: true,
+    location: 'Seattle',
+    price: '250',
+    title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
+    url: 'https://seattle.craigslist.org/see/vgm/4355583965.html'
+  },
+  /* results abbreviated */
+]
+```
+
 ### #search
 
 This method can be used to search Craigslist for specific postings.
@@ -134,6 +152,79 @@ client
   .catch((err) => {
     console.error(err);
   });
+```
+
+Example response:
+
+```javascript
+[
+  {
+    pid: '1234567890',
+    category: 'video gaming - by owner',
+    date: 'Mar  1',
+    hasPic: true,
+    location: 'Seattle',
+    price: '250',
+    title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
+    url: 'https://seattle.craigslist.org/see/vgm/4355583965.html'
+  },
+  /* results abbreviated */
+]
+```
+
+### #details
+
+This method can be used to grab additional information for a specified listing.
+
+**Usage:** `client.details(listing, callback)`
+
+* `listing` - _(required)_ - may be a listing object from a previous [#search](#search) or [#list](#list) call or a `string` URL to the specified posting
+* `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
+  * `err` - populated with details in the event of an error
+  * `result` - result set details
+
+To grab details for a listing, see the following example:
+
+```javascript
+var
+  craigslist = require('node-craigslist'),
+  client = new craigslist.Client({
+    city : 'seattle'
+  });
+
+client
+  .list()
+  .then((listings) => client.details(listings[0]))
+  .then((details) => {
+    console.log(details);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+```
+
+Example response (_NOTE: not all fields are populated if additional information is not found, including phone, contact name, email, images, postedAt and updatedAt_):
+
+```json
+{
+  "description": "My setup that taught me everything from mixing to scratching. A pair of DJ Consoles by DENON, a 2 channel mixer by Numark, all power supplies and RCA cables included, + ROAD CASE with wheels. I spent just over $1600 on this setup almost 5 years ago. Would love to see the whole thing go as a package, you can have it for $400. Come play around with it before you buy and see how awesome the scratching aspect is! Feels like real 7\'\' records!\n\nIncluded:\nPair of DENON DN-S3000\'s\nNumark DM1050 2 channel Mixer (+ Power Supply)\nRoad Read case with wheels\nRCA Cables for hook up\n\nHoller at me, email, call, or text.\nCheers,\nBro",
+  "mapUrl": "https://maps.google.com/maps/preview/@47.690237,-122.344437,16z",
+  "pid": "XXXXXXXXXX",
+  "replyUrl": "http://seattle.craigslist.org/reply/sea/msg/XXXXXXXXXX",
+  "title": "DJ Setup (DENONS + Mixer + Case)",
+  "url": "https://seattle.craigslist.org/see/msg/XXXXXXXXXX.html",
+  "postedAt": "2016-08-01T21:39:57.000Z",
+  "updatedAt": "2016-08-11T16:44:29.000Z",
+  "images":
+   [ "http://images.craigslist.org/XX404_ggud0ZU38XX_600x450.jpg",
+     "http://images.craigslist.org/XXP0P_h2cCxOdjCXX_600x450.jpg,"
+     "http://images.craigslist.org/XXm0m_khEDbKM7fXX_600x450.jpg",
+     "http://images.craigslist.org/XXZ0Z_c7xXA2eiCXX_600x450.jpg",
+     "http://images.craigslist.org/XXp0p_1jB0EqCaqXX_600x450.jpg" ],
+  "contactName": "Bro",
+  "phoneNumber": "(XXX) XXX-XXXX",
+  "email": "XXX-XXXX@XXXX.com"
+}
 ```
 
 ### Options
