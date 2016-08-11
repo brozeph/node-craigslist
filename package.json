@@ -2,9 +2,9 @@
   "name": "node-craigslist",
   "description": "a client library for searching, retrieving and creating Craigslist.com listings",
   "private": false,
-  "version": "0.1.9",
+  "version": "1.0.0",
   "author": "Joshua Thomas (http://github.com/brozeph)",
-  "engine": "node >= 0.8.0",
+  "engine": "node >= 4",
   "keywords": [
     "craigslist",
     "search"
@@ -13,24 +13,32 @@
     "type": "git",
     "url": "ssh://git@github.org:brozeph/node-craigslist.git"
   },
-  "main": "./lib",
+  "main": "./dist",
   "scripts": {
-    "pretest": "jshint lib/*.js test/*.js ; rm -rf lib-cov ; jscoverage --no-highlight lib lib-cov",
-    "test": "mocha --check-leaks -R spec -r ./test/common.js ./test/lib ./test/functional",
-    "posttest": "NODE_NCL_COVERAGE=true mocha -R mocha-lcov-reporter -r ./test/common.js ./test/lib | ./node_modules/coveralls/bin/coveralls.js",
-    "coverage": "rm -rf reports ; mkdir -p reports ; NODE_NCL_COVERAGE=true mocha -R html-cov -r ./test/common.js ./test/lib > reports/coverage.html",
-    "functional": "mocha -R spec -r ./test/common.js ./test/functional"
+    "prepublish": "gulp build",
+    "test": "gulp lint && gulp test-integration && gulp test-coverage"
   },
   "dependencies": {
-    "cheerio": "^0.17.0"
+    "babel-polyfill": "^6.13.0",
+    "cheerio": "^0.20.0",
+    "debug": "^2.2.0",
+    "source-map-support": "^0.4.2"
   },
   "devDependencies": {
-    "chai": "*",
-    "coveralls": "*",
-    "jscoverage": "*",
-    "jshint": "*",
-    "mocha": "*",
-    "mocha-lcov-reporter": "*"
+    "babel-eslint": "^6.1.2",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-stage-0": "^6.5.0",
+    "chai": "^3.5.0",
+    "del": "^2.2.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-coveralls": "^0.1.4",
+    "gulp-eslint": "^3.0.1",
+    "gulp-istanbul": "^1.0.0",
+    "gulp-mocha": "^3.0.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
+    "nock": "^8.0.0"
   },
   "directories": {
     "test": "test"
