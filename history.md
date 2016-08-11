@@ -1,3 +1,7 @@
+# 1.0.1 / 2016.08.11
+
+* Updated `.travis.yml` file to be more specific about which Node version to test against
+
 # 1.0.0 / 2016.08.08
 
 * Moved to `eslint` instead of `jshint`
