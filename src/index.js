@@ -101,10 +101,10 @@ function _getPostings (options, markup) {
 		secure = options.secure;
 
 	$('div.content')
-		.find('p.row')
+		.find('li.result-row')
 		.each((i, element) => {
 			let detailsUrl = $(element)
-				.find('span.pl a')
+				.find('a.result-title')
 				.attr('href');
 
 			// introducing fix for #6
@@ -130,11 +130,11 @@ function _getPostings (options, markup) {
 					lon : $(element).attr('data-longitude')
 				},
 				date : ($(element)
-					.find('span.pl time')
+					.find('time')
 					.attr('datetime') || '')
 						.trim(),
 				hasPic : ($(element)
-					.find('span.l2 span.p')
+					.find('span.result-tags')
 					.text() || '')
 						.trim() !== '',
 				location : ($(element)
@@ -146,12 +146,12 @@ function _getPostings (options, markup) {
 					.attr('data-pid') || '')
 						.trim(),
 				price : ($(element)
-					.find('span.l2 span.price')
+					.find('span.result-price')
 					.text() || '')
 						.replace(/^\&\#x0024\;/g, '')
 						.trim(), // sanitize
 				title : ($(element)
-					.find('span.pl a')
+					.find('a.result-title')
 					.text() || '')
 						.trim(),
 				url : detailsUrl
