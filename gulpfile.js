@@ -23,6 +23,10 @@ gulp.task('build', ['clean'], () => {
 			.pipe(gulp.dest('dist'));
 	});
 
+gulp.task('watch', function () {
+   gulp.watch('src/*.js', ['build']);
+});
+
 
 gulp.task('clean', function (callback) {
 	return del(['dist', 'reports'], callback);

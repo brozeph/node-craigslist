@@ -100,11 +100,11 @@ function _getPostings (options, markup) {
 		postings = [],
 		secure = options.secure;
 
-	$('div.content')
-		.find('p.row')
+	$('ul.rows')
+		.find('li.result-row')
 		.each((i, element) => {
 			let detailsUrl = $(element)
-				.find('span.pl a')
+				.find('a.result-title')
 				.attr('href');
 
 			// introducing fix for #6
@@ -114,6 +114,7 @@ function _getPostings (options, markup) {
 					hostname,
 					detailsUrl].join('');
 				// debug('adjusted URL for posting to (%s)', detailsUrl);
+                
 			} else {
 				detailsUrl = [
 					(secure ? 'https:' : 'http:'),
@@ -130,7 +131,7 @@ function _getPostings (options, markup) {
 					lon : $(element).attr('data-longitude')
 				},
 				date : ($(element)
-					.find('span.pl time')
+					.find('.result-date')
 					.attr('datetime') || '')
 						.trim(),
 				hasPic : ($(element)
@@ -138,22 +139,22 @@ function _getPostings (options, markup) {
 					.text() || '')
 						.trim() !== '',
 				location : ($(element)
-					.find('span.pnr small')
+					.find('.result-hood')
 					.text() || '')
 						.replace(/[\(,\)]/g, '') // santize
 						.trim(),
 				pid : ($(element)
 					.attr('data-pid') || '')
 						.trim(),
+                
 				price : ($(element)
-					.find('span.l2 span.price')
-					.text() || '')
-						.replace(/^\&\#x0024\;/g, '')
-						.trim(), // sanitize
+					.find('.result-price')
+					.text() || ''),
+                
 				title : ($(element)
-					.find('span.pl a')
+					.find('.result-title')
 					.text() || '')
-						.trim(),
+				    .trim(),
 				url : detailsUrl
 			};
 
@@ -166,7 +167,7 @@ function _getPostings (options, markup) {
 			postings.push(posting);
 		});
 
-	return postings;
+    return postings;
 }
 
 /**
