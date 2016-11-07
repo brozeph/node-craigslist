@@ -83,7 +83,6 @@ Example response:
     category: 'video gaming - by owner',
     date: 'Mar  1',
     hasPic: true,
-    location: 'Seattle',
     price: '250',
     title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
     url: 'https://seattle.craigslist.org/see/vgm/4355583965.html'
@@ -163,7 +162,6 @@ Example response:
     category: 'video gaming - by owner',
     date: 'Mar  1',
     hasPic: true,
-    location: 'Seattle',
     price: '250',
     title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
     url: 'https://seattle.craigslist.org/see/vgm/4355583965.html'
@@ -317,7 +315,6 @@ Each listing returned has several properties... see the example below:
   category: 'video gaming - by owner',
   date: 'Mar  1',
   hasPic: true,
-  location: 'Seattle',
   price: '250',
   title: 'NEW &amp; UNSEALED XBOX 360 - 250 GB BLACK FRIDAY BUNDLE',
   url: 'https://seattle.craigslist.org/see/vgm/4355583965.html' }
