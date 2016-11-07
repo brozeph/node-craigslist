@@ -2,7 +2,7 @@
   "name": "node-craigslist",
   "description": "a client library for searching, retrieving and creating Craigslist.com listings",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Joshua Thomas (http://github.com/brozeph)",
   "engine": "node >= 4",
   "keywords": [
