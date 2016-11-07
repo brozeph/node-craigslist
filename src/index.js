@@ -12,6 +12,7 @@ const
 	debug = debugLog('craigslist'),
 	DEFAULT_BASE_HOST = 'craigslist.org',
 	DEFAULT_CATEGORY = 'sss',
+	DEFAULT_CATEGORY_DETAILS_INDEX = 1,
 	DEFAULT_PATH = '/search/',
 	DEFAULT_QUERYSTRING = '?sort=rel',
 	DEFAULT_REQUEST_OPTIONS = {
@@ -28,7 +29,9 @@ const
 	QUERY_PARAM_MAX = '&maxAsk=',
 	QUERY_PARAM_MIN = '&minAsk=',
 	QUERY_PARAM_QUERY = '&query=',
-	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i;
+	RE_HTML = /\.htm(l)?/i,
+	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i,
+	RE_TAGS_MAP = /map/i;
 
 /**
  * Accepts strong of HTML and parses that string to find key details.
@@ -54,7 +57,7 @@ function _getPostingDetails (postingUrl, markup) {
 	details.url = postingUrl;
 
 	// populate posting info
-	$('div.postinginfos').find('p.postinginfo').each((i, element) => {
+	$('div.postinginfos').find('.postinginfo').each((i, element) => {
 		let infoType = $(element).text();
 
 		// set pid (a backup to ripping it from the URL)
@@ -101,11 +104,19 @@ function _getPostings (options, markup) {
 		secure = options.secure;
 
 	$('div.content')
-		.find('p.row')
+		.find('.result-row')
 		.each((i, element) => {
-			let detailsUrl = $(element)
-				.find('span.pl a')
-				.attr('href');
+			let
+				// introducing fix for #11 - Craigslist markup changed
+				details = $(element)
+					.find('.result-title')
+					.attr('href')
+					.split(/\//g)
+					.filter((term) => term.length)
+					.map((term) => term.split(RE_HTML)[0]),
+				detailsUrl = $(element)
+					.find('.result-title')
+					.attr('href');
 
 			// introducing fix for #6
 			if (!RE_QUALIFIED_URL.test(detailsUrl)) {
@@ -122,36 +133,33 @@ function _getPostings (options, markup) {
 			}
 
 			posting = {
-				category : $(element)
-					.find('span.l2 a.gc')
-					.text(),
+				category : details[DEFAULT_CATEGORY_DETAILS_INDEX],
 				coordinates : {
 					lat : $(element).attr('data-latitude'),
 					lon : $(element).attr('data-longitude')
 				},
 				date : ($(element)
-					.find('span.pl time')
+					.find('time')
 					.attr('datetime') || '')
 						.trim(),
-				hasPic : ($(element)
-					.find('span.l2 span.p')
-					.text() || '')
-						.trim() !== '',
+				hasPic : RE_TAGS_MAP
+					.test($(element)
+						.find('.result-tags')
+						.text() || ''),
 				location : ($(element)
-					.find('span.pnr small')
+					.find('.result-hood')
 					.text() || '')
-						.replace(/[\(,\)]/g, '') // santize
-						.trim(),
+					.trim(),
 				pid : ($(element)
 					.attr('data-pid') || '')
 						.trim(),
 				price : ($(element)
-					.find('span.l2 span.price')
+					.find('.result-price')
 					.text() || '')
 						.replace(/^\&\#x0024\;/g, '')
 						.trim(), // sanitize
 				title : ($(element)
-					.find('span.pl a')
+					.find('.result-title')
 					.text() || '')
 						.trim(),
 				url : detailsUrl

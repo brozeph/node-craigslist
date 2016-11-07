@@ -13,7 +13,8 @@ describe('functional tests for node-craigslist', function () {
 
 	var
 		client,
-		examplePosting;
+		examplePosting,
+		exampleURL;
 
 	/*eslint no-invalid-this:0*/
 	this.timeout(10000);
@@ -29,6 +30,8 @@ describe('functional tests for node-craigslist', function () {
 			client.search('xbox', function (err, data) {
 				should.not.exist(err);
 				should.exist(data);
+
+				exampleURL = data[0].url;
 
 				done();
 			});
@@ -78,7 +81,7 @@ describe('functional tests for node-craigslist', function () {
 
 	describe('#details', function () {
 		it('should properly get posting details with URL', function (done) {
-			let url = 'https://seattle.craigslist.org/see/msg/5711739353.html';
+			let url = exampleURL;
 			client.details(url, function (err, data) {
 				if (err) {
 					return done(err);

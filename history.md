@@ -1,3 +1,7 @@
+# 1.1.0 / 2016.11.07
+
+* Updated parser for Craigslist markup to work with new layout
+
 # 1.0.1 / 2016.08.11
 
 * Updated `.travis.yml` file to be more specific about which Node version to test against
