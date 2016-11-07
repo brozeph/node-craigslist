@@ -146,6 +146,10 @@ function _getPostings (options, markup) {
 					.test($(element)
 						.find('.result-tags')
 						.text() || ''),
+				location : ($(element)
+					.find('.result-hood')
+					.text() || '')
+					.trim(),
 				pid : ($(element)
 					.attr('data-pid') || '')
 						.trim(),
