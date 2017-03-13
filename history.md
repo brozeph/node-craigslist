@@ -1,3 +1,7 @@
+# 1.1.1 / 2017.03.13
+
+* Fixed issue #17 - multiple redirects
+
 # 1.1.0 / 2016.11.07
 
 * Updated parser for Craigslist markup to work with new layout

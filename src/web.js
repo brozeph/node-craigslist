@@ -48,7 +48,8 @@ const
 		'secure',
 		'socketPath',
 		'timeout'],
-	SECURE_PROTOCOL_RE = /^https/i;
+	SECURE_PROTOCOL_RE = /^https/i,
+	TOP_LEVEL_REDIRECT_RE = /^\/{2}([a-z0-9\-\_\.]*)([\/a-z\-\_\.]*)/i;
 
 function _augmentRequestOptions (options) {
 	let
@@ -191,6 +192,20 @@ function _exec (options, data, tryCount, callback) {
 
 						// remap options and redirect to supplied URL
 						let redirectUrl = url.parse(context.headers.location);
+
+						if (TOP_LEVEL_REDIRECT_RE.test(redirectUrl.pathname)) {
+							debug('top level domain detected in location: %o', redirectUrl);
+							let pathParts = redirectUrl.pathname.match(TOP_LEVEL_REDIRECT_RE);
+
+							// ensure the hostname is corrected
+							redirectUrl.host = pathParts[1];
+							redirectUrl.hostname = pathParts[1];
+
+							// update the path and pathname appropriately
+							redirectUrl.path = [pathParts[2], redirectUrl.search].join('');
+							redirectUrl.pathname = pathParts[2];
+						}
+
 						options = {
 							host : redirectUrl.host || options.host || options.hostname,
 							method : options.method,
