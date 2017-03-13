@@ -1,6 +1,6 @@
 # 1.1.1 / 2017.03.13
 
-* Fixed issue #17 - multiple redirects
+* Fixed issue #17 - multiple redirects when location in header contains a new host
 
 # 1.1.0 / 2016.11.07
 
