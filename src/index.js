@@ -154,7 +154,7 @@ function _getPostings (options, markup) {
 					.attr('data-pid') || '')
 						.trim(),
 				price : ($(element)
-					.find('.result-price')
+					.find('.result-meta .result-price')
 					.text() || '')
 						.replace(/^\&\#x0024\;/g, '')
 						.trim(), // sanitize

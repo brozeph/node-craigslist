@@ -90,8 +90,6 @@ describe('functional tests for node-craigslist', function () {
 					should.exist(data);
 					should.exist(data[0]);
 
-					examplePosting = data[0];
-
 					done();
 				})
 				.catch(done);
