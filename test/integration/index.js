@@ -64,14 +64,31 @@ describe('functional tests for node-craigslist', function () {
 		it('should properly search another country', function (done) {
 			client
 				.search({
-					city : 'montreal',
-					baseHost : 'craigslist.ca'},
+						city : 'montreal',
+						baseHost : 'craigslist.ca'
+					},
 					'xbox')
 				.then((data) => {
 					should.exist(data);
 					should.exist(data[0]);
 
 					examplePosting = data[0];
+
+					done();
+				})
+				.catch(done);
+		});
+
+		// integration test for #17
+		it('should properly search another country when baseHost is not specified', function (done) {
+			client
+				.search({
+						city : 'vancouver'
+					},
+					'xbox')
+				.then((data) => {
+					should.exist(data);
+					should.exist(data[0]);
 
 					done();
 				})

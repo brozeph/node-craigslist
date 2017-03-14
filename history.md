@@ -1,3 +1,8 @@
+# 1.1.1 / 2017.03.13
+
+* Fixed issue #17 - multiple redirects when location in header contains a new host
+* Fixed issue #16 - price appears twice in some search results
+
 # 1.1.0 / 2016.11.07
 
 * Updated parser for Craigslist markup to work with new layout
