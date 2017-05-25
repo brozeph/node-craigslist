@@ -80,10 +80,19 @@ function _getPostingDetails (postingUrl, markup) {
 	});
 
 	// populate posting photos
-	$('#thumbs').find('a').each((i, element) => {
-		details.images = details.images || [];
-		details.images.push(($(element).attr('href') || '').trim());
-	});
+	details.images = details.images || [];
+	if ($('#thumbs').length) {
+		$('#thumbs').find('a').each(function (i, element) {
+			details.images.push(($(element).attr('href') || '').trim());
+		});
+	} else {
+		try {
+			const single_img = $('.slide')[0].children[0].attribs.src;
+			details.images.push(single_img);
+		} catch (e) {
+			 debug('Image could not be fetched');
+		}
+	}
 
 	return details;
 }
