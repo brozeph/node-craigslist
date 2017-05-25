@@ -45,7 +45,7 @@ function _getPostingDetails (postingUrl, markup) {
 		$ = cheerio.load(markup),
 		details = {};
 
-	details.description = ($('#postingbody').text() || '').trim();
+	details.description = ($('#postingbody').text().replace($('.print-qrcode-container').text(), "").trim() || '').trim();
 	details.mapUrl = $('div.mapbox p.mapaddress')
 		.find('a')
 		.attr('href');
