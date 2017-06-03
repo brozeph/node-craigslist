@@ -1,9 +1,9 @@
 {
-  "name": "node-craigslist",
+  "name": "@akashdeepsinghal/cl-scrap",
   "description": "a client library for searching, retrieving and creating Craigslist.com listings",
   "private": false,
   "version": "1.1.1",
-  "author": "Joshua Thomas (http://github.com/brozeph)",
+  "author": "Akash Deep Singhal (http://github.com/akigupta131)",
   "engine": "node >= 4",
   "keywords": [
     "craigslist",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.org:brozeph/node-craigslist.git"
+    "url": "git+ssh://git@github.com/akigupta131/node-craigslist-scrap.git"
   },
   "main": "./dist",
   "scripts": {
@@ -43,5 +43,9 @@
   "directories": {
     "test": "test"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akigupta131/node-craigslist-scrap/issues"
+  },
+  "homepage": "https://github.com/akigupta131/node-craigslist-scrap#readme"
 }
