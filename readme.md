@@ -4,7 +4,6 @@ This module makes for simple retrieval of search results from Craigslist!
 
 [![Build Status](https://travis-ci.org/brozeph/node-craigslist.png)](https://travis-ci.org/brozeph/node-craigslist)
 [![Coverage Status](https://coveralls.io/repos/brozeph/node-craigslist/badge.png?branch=master)](https://coveralls.io/r/brozeph/node-craigslist?branch=master)
-[![Dependency Status](https://gemnasium.com/brozeph/node-craigslist.png)](https://gemnasium.com/brozeph/settings-lib)
 
 ## Installation
 

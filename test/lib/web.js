@@ -125,5 +125,54 @@ describe('unit tests for request', () => {
 				return done();
 			});
 		});
+
+		it('should properly apply proxy settings', (done) => {
+			options.path = '/full/path/test';
+			options.proxy = 'https://proxy.brozeph.com';
+
+			nock(options.proxy)
+				.get(/[.]*/gi)
+				.reply(200);
+
+			let requestOptions;
+
+			request.on('request', (o) => (requestOptions = o));
+
+			request.get(options, function (err) {
+				should.not.exist(err);
+				should.exist(requestOptions);
+				requestOptions.host.should.contain('proxy.brozeph.com');
+				requestOptions.path.should.include('test.brozeph.com/full/path/test');
+				should.exist(requestOptions.headers.Host);
+				requestOptions.headers.Host.should.equal('test.brozeph.com');
+
+				return done();
+			});
+		});
+
+		it('should properly apply proxy settings with port', (done) => {
+			options.path = '/full/path/test';
+			options.proxy = 'http://proxy.brozeph.com:8080';
+
+			nock(options.proxy)
+				.get(/[.]*/gi)
+				.reply(200);
+
+			let requestOptions;
+
+			request.on('request', (o) => (requestOptions = o));
+
+			request.get(options, function (err) {
+				should.not.exist(err);
+				should.exist(requestOptions);
+				requestOptions.host.should.contain('proxy.brozeph.com');
+				requestOptions.path.should.include('test.brozeph.com/full/path/test');
+				should.exist(requestOptions.headers.Host);
+				requestOptions.headers.Host.should.equal('test.brozeph.com');
+				Number(requestOptions.port).should.equal(8080);
+
+				return done();
+			});
+		});
 	});
 });
