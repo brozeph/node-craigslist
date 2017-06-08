@@ -7,10 +7,13 @@ import debugLog from 'debug';
 import events from 'events';
 import http from 'http';
 import https from 'https';
+import path from 'path';
 import url from 'url';
 
 const
 	debug = debugLog('craigslist'),
+	DEFAULT_HTTP_PORT = 80,
+	DEFAULT_HTTPS_PORT = 443,
 	DEFAULT_MAX_REDIRECT_COUNT = 5,
 	DEFAULT_RETRY_COUNT = 3,
 	DEFAULT_TIMEOUT = 30000,
@@ -26,6 +29,7 @@ const
 	HTTP_REDIRECT_CODE_TEMP = 302,
 	HTTP_REDIRECT_NEW_CODE_PERM = 308,
 	HTTP_REDIRECT_NEW_CODE_TEMP = 307,
+	HTTPS_RE = /^https\:?/i,
 	REQUEST_OPTIONS = [
 		'agent',
 		'auth',
@@ -41,6 +45,7 @@ const
 		'pathname',
 		'port',
 		'protocol',
+		'proxy',
 		'query',
 		'rejectUnauthorized',
 		'maxRetries',
@@ -128,6 +133,34 @@ function _exec (options, data, tryCount, callback) {
 		// apply application/json header if appropriate
 		if (!options.rawStream && options.json && !options.headers['Content-Type']) {
 			options.headers['Content-Type'] = 'application/json';
+		}
+
+		// apply proxy settings, as appropriate
+		if (!core.Validation.isEmpty(options.proxy)) {
+			let
+				host = options.host || options.hostname,
+				proxy = url.parse(options.proxy);
+
+			// set the host header to the destination server
+			options.headers['Host'] = host;
+
+			// ensure the path property includes the full destination URL (and port)
+			if (options.path.indexOf(host) < 0) {
+				if (options.port && [DEFAULT_HTTP_PORT, DEFAULT_HTTPS_PORT].indexOf(options.port) < 0) {
+					host = [host, options.port].join(':');
+				}
+
+				options.path = [
+					options.secure ? 'https' : 'http',
+					path.join(host, options.path)].join('://');
+			}
+
+			// set the secure settings, host and port for the options to the proxy server
+			options.host = proxy.host;
+			options.port = proxy.port;
+			options.secure = HTTPS_RE.test(proxy.protocol);
+
+			debug('proxy settings (%s) detected and applied: %o', options.proxy, options);
 		}
 
 		// provide request event

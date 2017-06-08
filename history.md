@@ -1,3 +1,7 @@
+# v1.1.2 / 2017.06.08
+
+* Added support for HTTP proxy requests (issue #15)
+
 # 1.1.1 / 2017.03.13
 
 * Fixed issue #17 - multiple redirects when location in header contains a new host
