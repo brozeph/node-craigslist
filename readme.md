@@ -97,11 +97,17 @@ This method can be used to search Craigslist for specific postings.
 **Usage:** `client.search(options, query, callback)`
 
 * `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
-  * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
   * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
+  * `bundleDuplicates` - _(optional)_ - when specified, duplicate listings are collapsed on search per Craigslist functionality
+  * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+  * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
+  * `hasPic` - _(optional)_ - when specified, only postings with images are returned
   * `maxAsk` - _(optional)_ - maximum price
   * `minAsk` - _(optional)_ - minimum price
-  * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+  * `postal` - _(optional)_ - when specified in conjunction with `searchDistance`, the postal code can be used to find posting within a certain range
+  * `searchDistance` - _(optional)_ - when specified in conjunction with `postal`, this is the distance range
+  * `searchNearby` - _(optional)_ - allows for a search to be performed against nearby locations as well
+  * `searchTitlesOnly` - _(optional)_ - performs search against posting titles only and not the posting body
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error

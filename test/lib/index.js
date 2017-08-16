@@ -249,7 +249,7 @@ describe('unit tests for node-craigslist', function () {
 		it('should properly search and use options to override', function (done) {
 			client.search({
 					bundleDuplicates : true,
-					hasImage : true,
+					hasPic : true,
 					maxAsk : '200',
 					minAsk : '100',
 					postal : '12345',
