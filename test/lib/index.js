@@ -231,7 +231,7 @@ describe('unit tests for node-craigslist', function () {
 				.catch(done);
 		});
 
-		it('should properly search and use options to override', function (done) {
+		it('should properly search and use query', function (done) {
 			client.search({ city : 'spokane' }, 'xbox', function (err, data) {
 				if (err) {
 					return done(err);
@@ -247,20 +247,37 @@ describe('unit tests for node-craigslist', function () {
 		});
 
 		it('should properly search and use options to override', function (done) {
-			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
-				if (err) {
-					return done(err);
-				}
+			client.search({
+					bundleDuplicates : true,
+					hasPic : true,
+					maxAsk : '200',
+					minAsk : '100',
+					postal : '12345',
+					searchDistance : 100,
+					searchNearby : true,
+					searchTitlesOnly : true
+				},
+				'xbox',
+				function (err, data) {
+					if (err) {
+						return done(err);
+					}
 
-				should.exist(data);
-				should.exist(requestOptions.hostname);
-				requestOptions.hostname.should.contain('seattle');
-				requestOptions.path.should.contain('query=xbox');
-				requestOptions.path.should.contain('minAsk=100');
-				requestOptions.path.should.contain('maxAsk=200');
+					should.exist(data);
+					should.exist(requestOptions.hostname);
+					requestOptions.hostname.should.contain('seattle');
+					requestOptions.path.should.contain('query=xbox');
+					requestOptions.path.should.contain('bundleDuplicates=1');
+					requestOptions.path.should.contain('hasPic=1');
+					requestOptions.path.should.contain('minAsk=100');
+					requestOptions.path.should.contain('maxAsk=200');
+					requestOptions.path.should.contain('postal=12345');
+					requestOptions.path.should.contain('search_distance=100');
+					requestOptions.path.should.contain('searchNearby=1');
+					requestOptions.path.should.contain('srchType=T');
 
-				done();
-			});
+					done();
+				});
 		});
 
 		it('should properly parse markup', function (done) {

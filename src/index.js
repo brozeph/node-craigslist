@@ -21,14 +21,30 @@ const
 		secure : true
 	},
 	QUERY_KEYS = [
+		'bundleDuplicates',
 		'category',
+		'hasImage',
+		'hasPic',
 		'maxAsk',
 		'minAsk',
-		'query'
+		'postal',
+		'postedToday',
+		'query',
+		'searchDistance',
+		'searchNearby',
+		'searchTitlesOnly',
+		'srcType'
 	],
+	QUERY_PARAM_BUNDLE_DUPLICATES = '&bundleDuplicates=1',
+	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
 	QUERY_PARAM_MAX = '&maxAsk=',
 	QUERY_PARAM_MIN = '&minAsk=',
+	QUERY_PARAM_POSTAL = '&postal=',
+	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
 	QUERY_PARAM_QUERY = '&query=',
+	QUERY_PARAM_SEARCH_DISTANCE = '&search_distance=',
+	QUERY_PARAM_SEARCH_NEARBY = '&searchNearby=1',
+	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
 	RE_HTML = /\.htm(l)?/i,
 	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i,
 	RE_TAGS_MAP = /map/i;
@@ -280,6 +296,20 @@ function _getRequestOptions (options, query) {
 			encodeURIComponent(query)].join('');
 	}
 
+	// add bundleDuplicates (if specified)
+	if (options.bundleDuplicates) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_BUNDLE_DUPLICATES].join('');
+	}
+
+	// add hasPic (if specified)
+	if (options.hasImage || options.hasPic) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_HAS_IMAGE].join('');
+	}
+
 	// add min asking price (if specified)
 	if (!core.Validation.isEmpty(options.minAsk)) {
 		requestOptions.path = [
@@ -294,6 +324,43 @@ function _getRequestOptions (options, query) {
 			requestOptions.path,
 			QUERY_PARAM_MAX,
 			options.maxAsk].join('');
+	}
+
+	// add postal (if specified)
+	if (!core.Validation.isEmpty(options.postal)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_POSTAL,
+			options.postal].join('');
+	}
+
+	// add postedToday (if specified)
+	if (options.postedToday) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_POSTED_TODAY].join('');
+	}
+
+	// add searchDistance (if specified)
+	if (!core.Validation.isEmpty(options.searchDistance)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_SEARCH_DISTANCE,
+			options.searchDistance].join('');
+	}
+
+	// add searchNearby (if specified)
+	if (options.searchNearby) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_SEARCH_NEARBY].join('');
+	}
+
+	// add searchTitlesOnly (if specified)
+	if (options.searchTitlesOnly) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_SEARCH_TITLES_ONLY].join('');
 	}
 
 	debug('setting request options: %o', requestOptions);

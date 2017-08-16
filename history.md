@@ -1,3 +1,7 @@
+# v1.2.0 / 2017.08.16
+
+* Added support for additional craigslist search options (`searchTitlesOnly`, `hasImage`, `postedToday`, `bundleDuplicates`, `searchNearby`, `searchDistance` and `postal`)
+
 # v1.1.2 / 2017.06.08
 
 * Added support for HTTP proxy requests (issue #15)
