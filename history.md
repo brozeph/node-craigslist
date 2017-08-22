@@ -1,3 +1,7 @@
+# v1.2.1 / 2017.08.22
+
+* Added support for additional craigslist search options (`offset`)
+
 # v1.2.0 / 2017.08.16
 
 * Added support for additional craigslist search options (`searchTitlesOnly`, `hasImage`, `postedToday`, `bundleDuplicates`, `searchNearby`, `searchDistance` and `postal`)
