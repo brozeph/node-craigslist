@@ -252,6 +252,7 @@ describe('unit tests for node-craigslist', function () {
 					hasPic : true,
 					maxAsk : '200',
 					minAsk : '100',
+					offset: 120,
 					postal : '12345',
 					searchDistance : 100,
 					searchNearby : true,
@@ -271,6 +272,7 @@ describe('unit tests for node-craigslist', function () {
 					requestOptions.path.should.contain('hasPic=1');
 					requestOptions.path.should.contain('minAsk=100');
 					requestOptions.path.should.contain('maxAsk=200');
+					requestOptions.path.should.contain('s=120');
 					requestOptions.path.should.contain('postal=12345');
 					requestOptions.path.should.contain('search_distance=100');
 					requestOptions.path.should.contain('searchNearby=1');

@@ -27,6 +27,7 @@ const
 		'hasPic',
 		'maxAsk',
 		'minAsk',
+		'offset',
 		'postal',
 		'postedToday',
 		'query',
@@ -45,6 +46,7 @@ const
 	QUERY_PARAM_SEARCH_DISTANCE = '&search_distance=',
 	QUERY_PARAM_SEARCH_NEARBY = '&searchNearby=1',
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
+	QUERY_PARAM_OFFSET = '&s=',
 	RE_HTML = /\.htm(l)?/i,
 	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i,
 	RE_TAGS_MAP = /map/i;
@@ -362,6 +364,12 @@ function _getRequestOptions (options, query) {
 			requestOptions.path,
 			QUERY_PARAM_SEARCH_TITLES_ONLY].join('');
 	}
+
+	// add offset (if specified)
+	if (options.offset) {
+		requestOptions.path = [requestOptions.path, QUERY_PARAM_OFFSET, options.offset].join('');
+	}
+
 
 	debug('setting request options: %o', requestOptions);
 
