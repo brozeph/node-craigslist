@@ -4,6 +4,9 @@
   "private": false,
   "version": "1.2.1",
   "author": "Joshua Thomas (http://github.com/brozeph)",
+  "contributors": [
+    "Will Spielberg (http://github.com/kapysh"
+  ],
   "engine": "node >= 4",
   "keywords": [
     "craigslist",
