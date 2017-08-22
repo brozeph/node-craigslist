@@ -48,6 +48,7 @@ This method can be used to grab a listing of Craigslist postings.
   * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
   * `maxAsk` - _(optional)_ - maximum price
   * `minAsk` - _(optional)_ - minimum price
+  * `offset` - _(optional)_ - offset number of listings returned
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error
@@ -104,6 +105,7 @@ This method can be used to search Craigslist for specific postings.
   * `hasPic` - _(optional)_ - when specified, only postings with images are returned
   * `maxAsk` - _(optional)_ - maximum price
   * `minAsk` - _(optional)_ - minimum price
+  * `offset` - _(optional)_ - offset number of listings returned
   * `postal` - _(optional)_ - when specified in conjunction with `searchDistance`, the postal code can be used to find posting within a certain range
   * `searchDistance` - _(optional)_ - when specified in conjunction with `postal`, this is the distance range
   * `searchNearby` - _(optional)_ - allows for a search to be performed against nearby locations as well
