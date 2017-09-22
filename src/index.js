@@ -103,6 +103,31 @@ function _getPostingDetails (postingUrl, markup) {
 		details.images.push(($(element).attr('href') || '').trim());
 	});
 
+	// grabs attributes if they exist
+	let attrTitle = $('div.mapAndAttrs').find('p.attrgroup').first().text().replace('\n', '').trim() || false;
+	let attribs = [];
+	$('div.mapAndAttrs').find('p.attrgroup').last().children().each((i, element) => {
+		if ($(element).is('span')) {
+			let attrib = $(element).text().split(/:\s/);
+			attribs.push({
+				key: attrib[0].replace(/\s/, '_'),
+				value: attrib[1]
+			});
+		}
+	});
+
+	// populates attributes
+	if (attrTitle)
+		details.attributesTitle = attrTitle;
+
+	if (attribs.length > 0) {
+		details.attributes = {};
+		for (let i = 0; i < attribs.length; i++) {
+			let attrib = attribs[i];
+			details.attributes[attrib.key] = attrib.value;
+		}
+	}
+
 	return details;
 }
 
