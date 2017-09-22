@@ -117,8 +117,9 @@ function _getPostingDetails (postingUrl, markup) {
 	});
 
 	// populates attributes
-	if (attrTitle)
+	if (attrTitle) {
 		details.attributesTitle = attrTitle;
+	}
 
 	if (attribs.length > 0) {
 		details.attributes = {};
