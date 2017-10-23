@@ -7,6 +7,7 @@ import core from './core.js';
 import debugLog from 'debug';
 import url from 'url';
 import web from './web.js';
+import URL from 'url-parse';
 
 const
 	debug = debugLog('craigslist'),
@@ -48,8 +49,8 @@ const
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
 	QUERY_PARAM_OFFSET = '&s=',
 	RE_HTML = /\.htm(l)?/i,
-	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i,
 	RE_TAGS_MAP = /map/i;
+
 
 /**
  * Accepts strong of HTML and parses that string to find key details.
@@ -136,19 +137,9 @@ function _getPostings (options, markup) {
 					.find('.result-title')
 					.attr('href');
 
-			// introducing fix for #6
-			if (!RE_QUALIFIED_URL.test(detailsUrl)) {
-				detailsUrl = [
-					(secure ? 'https://' : 'http://'),
-					hostname,
-					detailsUrl].join('');
-				// debug('adjusted URL for posting to (%s)', detailsUrl);
-			} else {
-				detailsUrl = [
-					(secure ? 'https:' : 'http:'),
-					detailsUrl].join('');
-				// debug('adjusted URL for postings to (%s)', detailsUrl);
-			}
+			var uobj = URL(detailsUrl, options.path);
+			uobj.set("protocol", secure ? "https:" : "http:");
+			detailsUrl = uobj.toString();
 
 			posting = {
 				category : details[DEFAULT_CATEGORY_DETAILS_INDEX],
@@ -425,12 +416,9 @@ export class Client {
 					}
 
 					// properly adjust reply URL
-					if (!RE_QUALIFIED_URL.test(details.replyUrl)) {
-						details.replyUrl = [
-							'http://',
-							requestOptions.hostname,
-							details.replyUrl].join('');
-					}
+					var urlo = new URL(details.replyUrl, requestOptions.path);
+					urlo.set("protocol", "http:");
+					details.replyUrl = urlo.toString();
 
 					// set request options to retrieve posting contact info
 					requestOptions = url.parse(details.replyUrl);
