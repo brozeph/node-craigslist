@@ -22,7 +22,8 @@
     "babel-polyfill": "^6.13.0",
     "cheerio": "^0.20.0",
     "debug": "^2.2.0",
-    "source-map-support": "^0.4.2"
+    "source-map-support": "^0.4.2",
+    "url-parse" : "^1.1.9"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
