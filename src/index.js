@@ -63,6 +63,7 @@ const
 function _getPostingDetails (postingUrl, markup) {
 	let
 		$ = cheerio.load(markup),
+		attributes = {},
 		details = {};
 
 	details.description = ($('#postingbody').text() || '').trim();
@@ -104,6 +105,23 @@ function _getPostingDetails (postingUrl, markup) {
 		details.images = details.images || [];
 		details.images.push(($(element).attr('href') || '').trim());
 	});
+
+	// grab attributes if they exist
+	$('div.mapAndAttrs')
+		.find('p.attrgroup')
+		.last()
+		.children()
+		.each((i, element) => {
+			if ($(element).is('span')) {
+				let attribute = $(element).text().split(/:\s/);
+				attributes[attribute[0].replace(/\s/g, '_')] = attribute[1];
+			}
+		});
+
+	// populate attributes
+	if (attributes && Object.keys(attributes).length) {
+		details.attributes = attributes;
+	}
 
 	return details;
 }
