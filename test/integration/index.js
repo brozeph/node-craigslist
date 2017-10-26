@@ -99,6 +99,7 @@ describe('functional tests for node-craigslist', function () {
 	describe('#details', function () {
 		it('should properly get posting details with URL', function (done) {
 			let url = exampleURL;
+
 			client.details(url, function (err, data) {
 				if (err) {
 					return done(err);
