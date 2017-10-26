@@ -1,3 +1,7 @@
+# v1.2.2 / 2017.10.26
+
+* Fixed #24 - duplicate hostname in posting url property
+
 # v1.2.1 / 2017.08.22
 
 * Added support for additional craigslist search options (`offset`)

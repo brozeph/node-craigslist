@@ -5,6 +5,7 @@ import 'source-map-support/register';
 import cheerio from 'cheerio';
 import core from './core.js';
 import debugLog from 'debug';
+import parse from 'url-parse';
 import url from 'url';
 import web from './web.js';
 
@@ -20,6 +21,8 @@ const
 		path : '',
 		secure : true
 	},
+	PROTOCOL_INSECURE = 'http',
+	PROTOCOL_SECURE = 'https',
 	QUERY_KEYS = [
 		'bundleDuplicates',
 		'category',
@@ -48,7 +51,6 @@ const
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
 	QUERY_PARAM_OFFSET = '&s=',
 	RE_HTML = /\.htm(l)?/i,
-	RE_QUALIFIED_URL = /^\/\/[a-z0-9\-]*\.craigslist\.[a-z]*/i,
 	RE_TAGS_MAP = /map/i;
 
 /**
@@ -116,7 +118,7 @@ function _getPostingDetails (postingUrl, markup) {
 function _getPostings (options, markup) {
 	let
 		$ = cheerio.load(markup),
-		hostname = options.hostname,
+		// hostname = options.hostname,
 		posting = {},
 		postings = [],
 		secure = options.secure;
@@ -132,23 +134,14 @@ function _getPostings (options, markup) {
 					.split(/\//g)
 					.filter((term) => term.length)
 					.map((term) => term.split(RE_HTML)[0]),
-				detailsUrl = $(element)
+				// fix for #6 and #24
+				detailsUrl = parse($(element)
 					.find('.result-title')
-					.attr('href');
+					.attr('href'));
 
-			// introducing fix for #6
-			if (!RE_QUALIFIED_URL.test(detailsUrl)) {
-				detailsUrl = [
-					(secure ? 'https://' : 'http://'),
-					hostname,
-					detailsUrl].join('');
-				// debug('adjusted URL for posting to (%s)', detailsUrl);
-			} else {
-				detailsUrl = [
-					(secure ? 'https:' : 'http:'),
-					detailsUrl].join('');
-				// debug('adjusted URL for postings to (%s)', detailsUrl);
-			}
+			// ensure hostname and protocol are properly set
+			detailsUrl.set('hostname', detailsUrl.hostname || options.hostname);
+			detailsUrl.set('protocol', secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE);
 
 			posting = {
 				category : details[DEFAULT_CATEGORY_DETAILS_INDEX],
@@ -180,7 +173,7 @@ function _getPostings (options, markup) {
 					.find('.result-title')
 					.text() || '')
 						.trim(),
-				url : detailsUrl
+				url : detailsUrl.toString()
 			};
 
 			// make sure lat / lon is valid
@@ -424,19 +417,14 @@ export class Client {
 						return resolve(details);
 					}
 
-					// properly adjust reply URL
-					if (!RE_QUALIFIED_URL.test(details.replyUrl)) {
-						details.replyUrl = [
-							'http://',
-							requestOptions.hostname,
-							details.replyUrl].join('');
+					details.replyUrl = parse(details.replyUrl);
+
+					if (!details.replyUrl.hostname) {
+						details.replyUrl.hostname = requestOptions.hostname;
 					}
 
-					// set request options to retrieve posting contact info
-					requestOptions = url.parse(details.replyUrl);
-
 					return self.request
-						.get(requestOptions)
+						.get(details.replyUrl)
 						.then((markup) => {
 							self::_getReplyDetails(details, markup);
 
