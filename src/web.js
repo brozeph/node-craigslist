@@ -96,9 +96,9 @@ function _augmentRequestOptions (options) {
 	// create `path` from pathname and query.
 	augmented.path = core.Validation.coalesce(augmented.path, augmented.pathname);
 	// create a unique stamp for queries to encourage fresh response rather than cached response
-  if(augmented.path.indexOf('?')>0){
-    augmented.path = augmented.path + '&uniqstamp=' + Date.now();
-  }
+	if(augmented.path.indexOf('?')>0){
+	  augmented.path = augmented.path + '&uniqstamp=' + Date.now();
+	}
 	return augmented;
 }
 
