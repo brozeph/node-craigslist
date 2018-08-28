@@ -95,7 +95,7 @@ function _augmentRequestOptions (options) {
 
 	// create `path` from pathname and query.
 	augmented.path = core.Validation.coalesce(augmented.path, augmented.pathname);
-  // create a unique stamp for queries to encourage fresh response rather than cached response
+	// create a unique stamp for queries to encourage fresh response rather than cached response
   if(augmented.path.indexOf('?')>0){
     augmented.path = augmented.path + '&uniqstamp=' + Date.now();
   }
@@ -132,9 +132,9 @@ function _exec (options, data, tryCount, callback) {
 
 		// apply content length header
 		options.headers['Content-Length'] = Buffer.byteLength(data);
-    // attempt to over-ride caching for more real time results
-    options.headers['Cache-Control'] = 'private, no-cache, no-store, must-revalidate, max-age=0';
-    options.headers['Pragma'] = 'no-cache';
+		// attempt to over-ride caching for more real time results
+		options.headers['Cache-Control'] = 'private, no-cache, no-store, must-revalidate, max-age=0';
+		options.headers['Pragma'] = 'no-cache';
 
 		// apply application/json header if appropriate
 		if (!options.rawStream && options.json && !options.headers['Content-Type']) {
