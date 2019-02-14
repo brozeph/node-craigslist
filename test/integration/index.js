@@ -68,9 +68,9 @@ describe('functional tests for node-craigslist', function () {
 			});
 		});
 
-		it('should properly search with minAsk and maxAsk (Promise)', function (done) {
+		it('should properly search with minPrice and maxPrice (Promise)', function (done) {
 			client
-				.search({ maxAsk : '200', minAsk : '100' }, 'xbox')
+				.search({ maxPrice : '200', minPrice : '100' }, 'xbox')
 				.then((data) => {
 					should.exist(data);
 					should.exist(data[0]);

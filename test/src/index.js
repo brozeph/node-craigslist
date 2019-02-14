@@ -115,7 +115,7 @@ describe('unit tests for node-craigslist', function () {
 		});
 
 		it('should properly list and use options to override', function (done) {
-			client.search({ maxAsk : '200', minAsk: '100' }, function (err, data) {
+			client.search({ maxPrice : '200', minPrice: '100' }, function (err, data) {
 				if (err) {
 					return done(err);
 				}
@@ -123,15 +123,15 @@ describe('unit tests for node-craigslist', function () {
 				should.exist(data);
 				should.exist(requestOptions.hostname);
 				requestOptions.hostname.should.contain('seattle');
-				requestOptions.path.should.contain('minAsk=100');
-				requestOptions.path.should.contain('maxAsk=200');
+				requestOptions.path.should.contain('min_price=100');
+				requestOptions.path.should.contain('max_price=200');
 
 				done();
 			});
 		});
 
 		it('should properly parse markup', function (done) {
-			client.search({ maxAsk : '200', minAsk: '100' }, function (err, data) {
+			client.search({ maxPrice : '200', minPrice: '100' }, function (err, data) {
 				if (err) {
 					return done(err);
 				}
@@ -249,8 +249,8 @@ describe('unit tests for node-craigslist', function () {
 			client.search({
 					bundleDuplicates : true,
 					hasPic : true,
-					maxAsk : '200',
-					minAsk : '100',
+					maxPrice : '200',
+					minPrice : '100',
 					nocache : true,
 					offset: 120,
 					postal : '12345',
@@ -270,8 +270,8 @@ describe('unit tests for node-craigslist', function () {
 					requestOptions.path.should.contain('query=xbox');
 					requestOptions.path.should.contain('bundleDuplicates=1');
 					requestOptions.path.should.contain('hasPic=1');
-					requestOptions.path.should.contain('minAsk=100');
-					requestOptions.path.should.contain('maxAsk=200');
+					requestOptions.path.should.contain('min_price=100');
+					requestOptions.path.should.contain('max_price=200');
 					requestOptions.path.should.contain('s=120');
 					requestOptions.path.should.contain('postal=12345');
 					requestOptions.path.should.contain('search_distance=100');
@@ -286,7 +286,7 @@ describe('unit tests for node-craigslist', function () {
 		});
 
 		it('should properly parse markup', function (done) {
-			client.search({ maxAsk : '200', minAsk: '100' }, 'xbox', function (err, data) {
+			client.search({ maxPrice : '200', minPrice: '100' }, 'xbox', function (err, data) {
 				if (err) {
 					return done(err);
 				}

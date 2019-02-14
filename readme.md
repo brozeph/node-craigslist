@@ -24,8 +24,8 @@ When constructing the craigslist client, options specified are used for all subs
 * `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
   * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required by [#list](#list) and [#search](#search) when not specified in the constructor_)
   * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
-  * `maxAsk` - _(optional)_ - maximum price
-  * `minAsk` - _(optional)_ - minimum price
+  * `maxPrice` - _(optional)_ - maximum price
+  * `minPrice` - _(optional)_ - minimum price
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
   * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
 
@@ -47,8 +47,8 @@ This method can be used to grab a listing of Craigslist postings.
 * `options` - _(optional)_ - can be used to supply additional options - see [Options](#options) for details
   * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
   * `baseHost` - _(optional)_ - allows for specification of the base domain (defaults to `craiglist.org`) to support other countries (i.e. for Canada, `craigslist.ca`)
-  * `maxAsk` - _(optional)_ - maximum price
-  * `minAsk` - _(optional)_ - minimum price
+  * `maxPrice` - _(optional)_ - maximum price
+  * `minPrice` - _(optional)_ - minimum price
   * `offset` - _(optional)_ - offset number of listings returned
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
   * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
@@ -105,8 +105,8 @@ This method can be used to search Craigslist for specific postings.
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
   * `city` - _(optional)_ - defines the city for the search (_NOTE: this field is required when city is not specified in the constructor_)
   * `hasPic` - _(optional)_ - when specified, only postings with images are returned
-  * `maxAsk` - _(optional)_ - maximum price
-  * `minAsk` - _(optional)_ - minimum price
+  * `maxPrice` - _(optional)_ - maximum price
+  * `minPrice` - _(optional)_ - minimum price
   * `offset` - _(optional)_ - offset number of listings returned
   * `postal` - _(optional)_ - when specified in conjunction with `searchDistance`, the postal code can be used to find posting within a certain range
   * `searchDistance` - _(optional)_ - when specified in conjunction with `postal`, this is the distance range
@@ -148,8 +148,8 @@ var
   }),
   options = {
     category : 'ppa',
-    maxAsk : '200',
-    minAsk : '100'
+    maxPrice : '200',
+    minPrice : '100'
   };
 
 client
@@ -240,7 +240,7 @@ Example response (_NOTE: not all fields are populated if additional information 
 Per request, options can be modified to specify the following:
 * a different city than whatever is specified during initialization (`city` option)
 * a different country than whatever is specified during initialization (`baseHost` option)
-* min and max price ranges (`maxAsk` and `minAsk` options)
+* min and max price ranges (`maxPrice` and `minPrice` options)
 * category (`category` option)
 
 ```javascript
@@ -253,8 +253,8 @@ var
     baseHost : '', // defaults to craigslist.org
     category : '', // defaults to sss (all)
     city : '',
-    maxAsk : '200',
-    minAsk : '100'
+    maxPrice : '200',
+    minPrice : '100'
   };
 
 client

@@ -26,8 +26,8 @@ const
 		'category',
 		'hasImage',
 		'hasPic',
-		'maxAsk',
-		'minAsk',
+		'max_price',
+		'min_price',
 		'offset',
 		'postal',
 		'postedToday',
@@ -39,8 +39,8 @@ const
 	],
 	QUERY_PARAM_BUNDLE_DUPLICATES = '&bundleDuplicates=1',
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
-	QUERY_PARAM_MAX = '&maxAsk=',
-	QUERY_PARAM_MIN = '&minAsk=',
+	QUERY_PARAM_MAX = '&max_price=',
+	QUERY_PARAM_MIN = '&min_price=',
 	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
 	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
@@ -319,7 +319,7 @@ function _getRequestOptions (client, options, query) {
 			QUERY_PARAM_HAS_IMAGE].join('');
 	}
 
-	// add min asking price (if specified)
+	// add min asking price (if specified) (deprecated)
 	if (!core.Validation.isEmpty(options.minAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
@@ -327,12 +327,28 @@ function _getRequestOptions (client, options, query) {
 			options.minAsk].join('');
 	}
 
-	// add max asking price (if specified)
+	// add min price (if specified)
+	if (!core.Validation.isEmpty(options.minPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN,
+			options.minPrice].join('');
+	}
+
+	// add max asking price (if specified) (deprecated)
 	if (!core.Validation.isEmpty(options.maxAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MAX,
 			options.maxAsk].join('');
+	}
+
+	// add max price (if specified)
+	if (!core.Validation.isEmpty(options.maxPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX,
+			options.maxPrice].join('');
 	}
 
 	// add postal (if specified)
