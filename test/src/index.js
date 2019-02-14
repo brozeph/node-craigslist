@@ -251,6 +251,7 @@ describe('unit tests for node-craigslist', function () {
 					hasPic : true,
 					maxAsk : '200',
 					minAsk : '100',
+					nocache : true,
 					offset: 120,
 					postal : '12345',
 					searchDistance : 100,
@@ -276,6 +277,9 @@ describe('unit tests for node-craigslist', function () {
 					requestOptions.path.should.contain('search_distance=100');
 					requestOptions.path.should.contain('searchNearby=1');
 					requestOptions.path.should.contain('srchType=T');
+					should.exist(requestOptions.headers);
+					should.exist(requestOptions.headers['Cache-Control']);
+					should.exist(requestOptions.headers['Pragma']);
 
 					done();
 				});

@@ -27,6 +27,7 @@ When constructing the craigslist client, options specified are used for all subs
   * `maxAsk` - _(optional)_ - maximum price
   * `minAsk` - _(optional)_ - minimum price
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+  * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
 
 ```javascript
 const craigslist = require('node-craigslist');
@@ -50,6 +51,7 @@ This method can be used to grab a listing of Craigslist postings.
   * `minAsk` - _(optional)_ - minimum price
   * `offset` - _(optional)_ - offset number of listings returned
   * `category` - _(optional)_ - allows for specification of the category (defaults to `sss`) to search in other categories
+  * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error
   * `result` - result set details
@@ -110,6 +112,7 @@ This method can be used to search Craigslist for specific postings.
   * `searchDistance` - _(optional)_ - when specified in conjunction with `postal`, this is the distance range
   * `searchNearby` - _(optional)_ - allows for a search to be performed against nearby locations as well
   * `searchTitlesOnly` - _(optional)_ - performs search against posting titles only and not the posting body
+  * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error

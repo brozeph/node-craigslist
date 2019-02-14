@@ -3,6 +3,7 @@
 * Updated babel dependencies
 * Modified exports which impacts how the library is instantiated in code
 * Added code for #30 - refresh data per request
+* Replaced internal request abstraction with [`reqlib`](https://github.com/brozeph/reqlib)
 
 # v1.2.2 / 2017.10.26
 

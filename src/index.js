@@ -9,6 +9,7 @@ const
 	DEFAULT_BASE_HOST = 'craigslist.org',
 	DEFAULT_CATEGORY = 'sss',
 	DEFAULT_CATEGORY_DETAILS_INDEX = 1,
+	DEFAULT_NO_CACHE = 'no-cache',
 	DEFAULT_PATH = '/search/',
 	DEFAULT_QUERYSTRING = '?sort=rel',
 	DEFAULT_REQUEST_OPTIONS = {
@@ -16,6 +17,8 @@ const
 		path : '',
 		secure : true
 	},
+	HEADER_CACHE_CONTROL = 'Cache-Control',
+	HEADER_PRAGMA = 'Pragma',
 	PROTOCOL_INSECURE = 'http:',
 	PROTOCOL_SECURE = 'https:',
 	QUERY_KEYS = [
@@ -374,6 +377,15 @@ function _getRequestOptions (client, options, query) {
 		requestOptions.path = [requestOptions.path, QUERY_PARAM_OFFSET, options.offset].join('');
 	}
 
+	// add cache control headers (if nocache is specified)
+	if (options.nocache) {
+		// ensure we have headers...
+		requestOptions.headers = requestOptions.headers || {};
+
+		// add headers to attempt to override cache controls
+		requestOptions.headers[HEADER_CACHE_CONTROL] = DEFAULT_NO_CACHE;
+		requestOptions.headers[HEADER_PRAGMA] = DEFAULT_NO_CACHE;
+	}
 
 	debug('setting request options: %o', requestOptions);
 
