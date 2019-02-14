@@ -1,19 +1,15 @@
-'use strict';
-
-import 'babel-polyfill';
-import 'source-map-support/register';
 import cheerio from 'cheerio';
 import core from './core.js';
 import debugLog from 'debug';
-import parse from 'url-parse';
+import { Request } from 'reqlib';
 import url from 'url';
-import web from './web.js';
 
 const
 	debug = debugLog('craigslist'),
 	DEFAULT_BASE_HOST = 'craigslist.org',
 	DEFAULT_CATEGORY = 'sss',
 	DEFAULT_CATEGORY_DETAILS_INDEX = 1,
+	DEFAULT_NO_CACHE = 'no-cache',
 	DEFAULT_PATH = '/search/',
 	DEFAULT_QUERYSTRING = '?sort=rel',
 	DEFAULT_REQUEST_OPTIONS = {
@@ -21,15 +17,17 @@ const
 		path : '',
 		secure : true
 	},
-	PROTOCOL_INSECURE = 'http',
-	PROTOCOL_SECURE = 'https',
+	HEADER_CACHE_CONTROL = 'Cache-Control',
+	HEADER_PRAGMA = 'Pragma',
+	PROTOCOL_INSECURE = 'http:',
+	PROTOCOL_SECURE = 'https:',
 	QUERY_KEYS = [
 		'bundleDuplicates',
 		'category',
 		'hasImage',
 		'hasPic',
-		'maxAsk',
-		'minAsk',
+		'max_price',
+		'min_price',
 		'offset',
 		'postal',
 		'postedToday',
@@ -41,15 +39,15 @@ const
 	],
 	QUERY_PARAM_BUNDLE_DUPLICATES = '&bundleDuplicates=1',
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
-	QUERY_PARAM_MAX = '&maxAsk=',
-	QUERY_PARAM_MIN = '&minAsk=',
+	QUERY_PARAM_MAX = '&max_price=',
+	QUERY_PARAM_MIN = '&min_price=',
+	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
 	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
 	QUERY_PARAM_QUERY = '&query=',
 	QUERY_PARAM_SEARCH_DISTANCE = '&search_distance=',
 	QUERY_PARAM_SEARCH_NEARBY = '&searchNearby=1',
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
-	QUERY_PARAM_OFFSET = '&s=',
 	RE_HTML = /\.htm(l)?/i,
 	RE_TAGS_MAP = /map/i;
 
@@ -153,13 +151,13 @@ function _getPostings (options, markup) {
 					.filter((term) => term.length)
 					.map((term) => term.split(RE_HTML)[0]),
 				// fix for #6 and #24
-				detailsUrl = parse($(element)
+				detailsUrl = url.parse($(element)
 					.find('.result-title')
 					.attr('href'));
 
 			// ensure hostname and protocol are properly set
-			detailsUrl.set('hostname', detailsUrl.hostname || options.hostname);
-			detailsUrl.set('protocol', secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE);
+			detailsUrl.hostname = detailsUrl.hostname || options.hostname;
+			detailsUrl.protocol = secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE;
 
 			posting = {
 				category : details[DEFAULT_CATEGORY_DETAILS_INDEX],
@@ -191,7 +189,7 @@ function _getPostings (options, markup) {
 					.find('.result-title')
 					.text() || '')
 						.trim(),
-				url : detailsUrl.toString()
+				url : detailsUrl.format()
 			};
 
 			// make sure lat / lon is valid
@@ -257,23 +255,21 @@ function _getReplyDetails (details, markup) {
  * in initialization options, uses the default options setting. All keys provided in
  * the input options variable are retained.
  *
+ * @param {Client} client - the client instance wrapping the Craigslist request
  * @param {object} options - Input options for the web request
  * @param {string} query - A querystring
  * @returns {object} options - The coalesced result of options
  **/
-function _getRequestOptions (options, query) {
-	var
-		requestOptions = JSON.parse(JSON.stringify(DEFAULT_REQUEST_OPTIONS)),
-		/*eslint no-invalid-this:0*/
-		self = this;
+function _getRequestOptions (client, options, query) {
+	let requestOptions = JSON.parse(JSON.stringify(DEFAULT_REQUEST_OPTIONS));
 
 	// ensure default options are set, even if omitted from input options
 	requestOptions.hostname = [
-		core.Validation.coalesce(options.city, self.options.city, ''),
+		core.Validation.coalesce(options.city, client.options.city, ''),
 		// introducing fix for #7
 		core.Validation.coalesce(
 			options.baseHost,
-			self.options.baseHost,
+			client.options.baseHost,
 			DEFAULT_BASE_HOST)
 	].join('.');
 
@@ -323,7 +319,7 @@ function _getRequestOptions (options, query) {
 			QUERY_PARAM_HAS_IMAGE].join('');
 	}
 
-	// add min asking price (if specified)
+	// add min asking price (if specified) (deprecated)
 	if (!core.Validation.isEmpty(options.minAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
@@ -331,12 +327,28 @@ function _getRequestOptions (options, query) {
 			options.minAsk].join('');
 	}
 
-	// add max asking price (if specified)
+	// add min price (if specified)
+	if (!core.Validation.isEmpty(options.minPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN,
+			options.minPrice].join('');
+	}
+
+	// add max asking price (if specified) (deprecated)
 	if (!core.Validation.isEmpty(options.maxAsk)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MAX,
 			options.maxAsk].join('');
+	}
+
+	// add max price (if specified)
+	if (!core.Validation.isEmpty(options.maxPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX,
+			options.maxPrice].join('');
 	}
 
 	// add postal (if specified)
@@ -381,6 +393,15 @@ function _getRequestOptions (options, query) {
 		requestOptions.path = [requestOptions.path, QUERY_PARAM_OFFSET, options.offset].join('');
 	}
 
+	// add cache control headers (if nocache is specified)
+	if (options.nocache) {
+		// ensure we have headers...
+		requestOptions.headers = requestOptions.headers || {};
+
+		// add headers to attempt to override cache controls
+		requestOptions.headers[HEADER_CACHE_CONTROL] = DEFAULT_NO_CACHE;
+		requestOptions.headers[HEADER_PRAGMA] = DEFAULT_NO_CACHE;
+	}
 
 	debug('setting request options: %o', requestOptions);
 
@@ -388,9 +409,9 @@ function _getRequestOptions (options, query) {
 }
 
 export class Client {
-	constructor(options) {
+	constructor (options) {
 		this.options = options || {};
-		this.request = new web.Request(this.options);
+		this.request = new Request(this.options);
 	}
 
 	details (posting, callback) {
@@ -421,7 +442,7 @@ export class Client {
 				.get(requestOptions)
 				.then((markup) => {
 					debug('retrieved posting %o', posting);
-					let details = self::_getPostingDetails(postingUrl, markup);
+					let details = _getPostingDetails(postingUrl, markup);
 
 					return resolve(details);
 				})
@@ -435,16 +456,17 @@ export class Client {
 						return resolve(details);
 					}
 
-					details.replyUrl = parse(details.replyUrl);
+					details.replyUrl = url.parse(details.replyUrl);
 
 					if (!details.replyUrl.hostname) {
 						details.replyUrl.hostname = requestOptions.hostname;
+						details.replyUrl.protocol = requestOptions.secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE;
 					}
 
 					return self.request
 						.get(details.replyUrl)
 						.then((markup) => {
-							self::_getReplyDetails(details, markup);
+							_getReplyDetails(details, markup);
 
 							return resolve(details);
 						})
@@ -458,7 +480,7 @@ export class Client {
 	}
 
 	list (options, callback) {
-		/*eslint no-undefined:0*/
+		/* eslint no-undefined : 0 */
 		return this.search(options, undefined, callback);
 	}
 
@@ -477,7 +499,7 @@ export class Client {
 		if (typeof options === 'function') {
 			callback = options;
 			options = {};
-			/*eslint no-undefined:0*/
+			/* eslint no-undefined : 0 */
 			query = undefined;
 		}
 
@@ -491,7 +513,7 @@ export class Client {
 		// create a Promise to execute the request
 		exec = new Promise((resolve, reject) => {
 			// remap options for the request
-			let requestOptions = this::_getRequestOptions(options, query);
+			let requestOptions = _getRequestOptions(this, options, query);
 
 			debug('request options set to: %o', requestOptions);
 
@@ -517,4 +539,4 @@ export class Client {
 	}
 }
 
-export default { Client }
+export default { Client };

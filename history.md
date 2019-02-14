@@ -1,3 +1,11 @@
+# v2.0.0 / 2019.02.13
+
+* Updated babel dependencies
+* Modified exports which impacts how the library is instantiated in code
+* Added code for #30 - refresh data per request
+* Replaced internal request abstraction with [`reqlib`](https://github.com/brozeph/reqlib)
+* Added fix for #28 (min_price and max_price params)
+
 # v1.2.2 / 2017.10.26
 
 * Fixed #24 - duplicate hostname in posting url property
