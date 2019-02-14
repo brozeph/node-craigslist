@@ -1,48 +1,70 @@
-/*eslint no-magic-numbers:0*/
-/*eslint no-unused-expressions:0*/
-var
-	chai = require('chai'),
+/* eslint no-magic-numbers : 0 */
+/* eslint no-unused-expressions : 0 */
 
-	craigslist = require('../../dist/index.js'),
+import chai from 'chai';
+import craigslist from '../../src';
 
-	should = chai.should();
-
+const should = chai.should();
 
 describe('functional tests for node-craigslist', function () {
-	'use strict';
-
-	var
+	let
 		client,
 		examplePosting,
 		exampleURL;
 
-	/*eslint no-invalid-this:0*/
+	/* eslint no-invalid-this : 0 */
 	this.timeout(10000);
 
 	beforeEach(function () {
 		client = new craigslist.Client({
 			city : 'seattle'
 		});
+
+		/*
+		client.request.on('redirect', (state) => {
+			console.log('REDIRECT:');
+			console.log(state);
+			console.log();
+		});
+
+		client.request.on('request', (state) => {
+			console.log('REQUEST:');
+			console.log(state);
+			console.log();
+		});
+
+		client.request.on('response', (state) => (state) => {
+			console.log('RESPONSE:');
+			console.log(state);
+			console.log();
+		});
+		//*/
 	});
 
 	describe('#search', function () {
 		it('should properly search without options', function (done) {
 			client.search('xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 
 				exampleURL = data[0].url;
 
-				done();
+				return done();
 			});
 		});
 
 		it('should properly search with options', function (done) {
 			client.search({ city : 'spokane' }, 'xbox', function (err, data) {
-				should.not.exist(err);
+				if (err) {
+					return done(err);
+				}
+
 				should.exist(data);
 
-				done();
+				return done();
 			});
 		});
 
@@ -64,8 +86,8 @@ describe('functional tests for node-craigslist', function () {
 		it('should properly search another country', function (done) {
 			client
 				.search({
-						city : 'montreal',
-						baseHost : 'craigslist.ca'
+						baseHost : 'craigslist.ca',
+						city : 'montreal'
 					},
 					'xbox')
 				.then((data) => {

@@ -1,11 +1,9 @@
-/*eslint no-magic-numbers:0*/
-var
-	chai = require('chai'),
+/* eslint no-magic-numbers : 0 */
 
-	craigslist = require('../../dist/index.js'),
+import chai from 'chai';
+import { Client } from '../../src';
 
-	should = chai.should();
-
+const should = chai.should();
 
 describe('unit tests for node-craigslist', function () {
 	'use strict';
@@ -25,7 +23,7 @@ describe('unit tests for node-craigslist', function () {
 
 		testMarkup = '<!DOCTYPE html><html><head></head><bosy class="search en desktop w1024 grid"><div class="content" id="sortable-results"><ul class="rows"><li class="result-row" data-pid="5854157194"><a href="/skc/vgm/5854157194.html" class="result-image gallery" data-ids="1:00606_fVtBBKvKhVs,1:01111_3svaqLUEItO,1:00P0P_8pvX9wKAFa0,1:00C0C_T8IufGFDPX"><div class="swipe" style="visibility: visible;"><div class="swipe-wrap" style="width: 1200px;"><div data-index="0" style="width: 300px; left: 0px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(0px, 0px);"><img alt="" class="" src="https://images.craigslist.org/00606_fVtBBKvKhVs_300x300.jpg"></div><div data-index="1" style="width: 300px; left: -300px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="2" style="width: 300px; left: -600px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="3" style="width: 300px; left: -900px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(-300px, 0px);"></div></div></div><div class="slider-info">image 1 of 4</div><div class="slider-back arrow">&lt;</div><div class="slider-forward arrow">&gt;</div></a><p class="result-info"><span class="icon icon-star" role="button" title="save this post in your favorites list"><span class="screen-reader-text">favorite this post</span></span><time class="result-date" datetime="2016-11-07 07:17" title="Mon 07 Nov 07:17:45 AM">Nov7</time><a href="/skc/vgm/5854157194.html" data-id="5854157194" class="result-title hdrlnk">Original XBox Console (Parts Only) with Games and Controllers</a><span class="result-meta"><span class="result-price">$50</span><span class="result-hood"> (Kent)</span><span class="result-tags">pic<span class="maptag" data-pid="5854157194">map</span></span><span class="banish icon icon-trash" role="button"><span class="screen-reader-text">hide this posting</span></span><span class="unbanish icon icon-trash red" role="button" aria-hidden="true"></span><a href="#" class="restore-link"><span class="restore-narrow-text">restore</span><span class="restore-wide-text">restore this posting</span></a></span></p></li><li class="result-row" data-pid="5864805989" data-repost-of="5629475186"><a href="/sno/for/5864805989.html" class="result-image gallery" data-ids="1:00U0U_8lYpby8dfuQ,1:00K0K_lMWraJin7UP,1:01212_jCSXqTJYdAY,1:00p0p_2yZma4AeUPe,1:00p0p_4a2r0yFy3Fd,1:00a0a_83dEsTxklv1,1:00f0f_arGkw8QriLB,1:00r0r_fFmK3eaxz28,1:00C0C_boTeH7feZ3S"><div class="swipe" style="visibility: visible;"><div class="swipe-wrap" style="width: 2700px;"><div data-index="0" style="width: 300px; left: 0px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(0px, 0px);"><img alt="" class="" src="https://images.craigslist.org/00U0U_8lYpby8dfuQ_300x300.jpg"></div><div data-index="1" style="width: 300px; left: -300px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="2" style="width: 300px; left: -600px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="3" style="width: 300px; left: -900px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="4" style="width: 300px; left: -1200px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="5" style="width: 300px; left: -1500px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="6" style="width: 300px; left: -1800px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="7" style="width: 300px; left: -2100px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(300px, 0px);"></div><div data-index="8" style="width: 300px; left: -2400px; transition-duration: 0ms; -webkit-transition-duration: 0ms; transform: translate(-300px, 0px);"></div></div></div><div class="slider-info">image 1 of 9</div><div class="slider-back arrow">&lt;</div><div class="slider-forward arrow">&gt;</div></a><p class="result-info"><span class="icon icon-star" role="button" title="save this post in your favorites list"><span class="screen-reader-text">favorite this post</span></span><time class="result-date" datetime="2016-11-06 21:31" title="Sun 06 Nov 09:31:13 PM">Nov6</time><a href="/sno/for/5864805989.html" data-id="5864805989" class="result-title hdrlnk">**Xbox 360 Kinect w 2 games bundle New In Box plus more</a><span class="result-meta"><span class="result-price">$250</span><span class="result-hood"> (Everett)</span><span class="result-tags">pic<span class="maptag" data-pid="5864805989">map</span></span><span class="banish icon icon-trash" role="button"><span class="screen-reader-text">hide this posting</span></span><span class="unbanish icon icon-trash red" role="button" aria-hidden="true"></span><a href="#" class="restore-link"><span class="restore-narrow-text">restore</span><span class="restore-wide-text">restore this posting</span></a></span></p></li></ul></div></body></html>';
 
-		client = new craigslist.Client(options);
+		client = new Client(options);
 
 		client.request.get = function (options, callback) {
 			requestOptions = options;
@@ -146,7 +144,7 @@ describe('unit tests for node-craigslist', function () {
 				data[0].date.should.have.length.above(1, 'date');
 				should.exist(data[0].hasPic, 'hasPic');
 				// fix for #11 - location is removed :(
-				//data[0].location.should.have.length.above(1, 'location');
+				// data[0].location.should.have.length.above(1, 'location');
 				data[0].price.should.have.length.above(1, 'price');
 				data[0].title.should.have.length.above(1, 'title');
 				data[0].url.should.have.length.above(1, 'url');

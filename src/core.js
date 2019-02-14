@@ -1,8 +1,3 @@
-'use strict'
-
-import 'babel-polyfill';
-import 'source-map-support/register';
-
 export class Validation {
 	static coalesce () {
 		return Array
@@ -36,4 +31,4 @@ export class Validation {
 	}
 }
 
-export default { Validation }
+export default { Validation };

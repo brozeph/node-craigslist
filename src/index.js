@@ -1,13 +1,8 @@
-'use strict';
-
-import 'babel-polyfill';
-import 'source-map-support/register';
 import cheerio from 'cheerio';
 import core from './core.js';
 import debugLog from 'debug';
-import parse from 'url-parse';
+import { Request } from 'reqlib';
 import url from 'url';
-import web from './web.js';
 
 const
 	debug = debugLog('craigslist'),
@@ -21,8 +16,8 @@ const
 		path : '',
 		secure : true
 	},
-	PROTOCOL_INSECURE = 'http',
-	PROTOCOL_SECURE = 'https',
+	PROTOCOL_INSECURE = 'http:',
+	PROTOCOL_SECURE = 'https:',
 	QUERY_KEYS = [
 		'bundleDuplicates',
 		'category',
@@ -43,13 +38,13 @@ const
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
 	QUERY_PARAM_MAX = '&maxAsk=',
 	QUERY_PARAM_MIN = '&minAsk=',
+	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
 	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
 	QUERY_PARAM_QUERY = '&query=',
 	QUERY_PARAM_SEARCH_DISTANCE = '&search_distance=',
 	QUERY_PARAM_SEARCH_NEARBY = '&searchNearby=1',
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
-	QUERY_PARAM_OFFSET = '&s=',
 	RE_HTML = /\.htm(l)?/i,
 	RE_TAGS_MAP = /map/i;
 
@@ -153,13 +148,13 @@ function _getPostings (options, markup) {
 					.filter((term) => term.length)
 					.map((term) => term.split(RE_HTML)[0]),
 				// fix for #6 and #24
-				detailsUrl = parse($(element)
+				detailsUrl = url.parse($(element)
 					.find('.result-title')
 					.attr('href'));
 
 			// ensure hostname and protocol are properly set
-			detailsUrl.set('hostname', detailsUrl.hostname || options.hostname);
-			detailsUrl.set('protocol', secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE);
+			detailsUrl.hostname = detailsUrl.hostname || options.hostname;
+			detailsUrl.protocol = secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE;
 
 			posting = {
 				category : details[DEFAULT_CATEGORY_DETAILS_INDEX],
@@ -191,7 +186,7 @@ function _getPostings (options, markup) {
 					.find('.result-title')
 					.text() || '')
 						.trim(),
-				url : detailsUrl.toString()
+				url : detailsUrl.format()
 			};
 
 			// make sure lat / lon is valid
@@ -257,23 +252,21 @@ function _getReplyDetails (details, markup) {
  * in initialization options, uses the default options setting. All keys provided in
  * the input options variable are retained.
  *
+ * @param {Client} client - the client instance wrapping the Craigslist request
  * @param {object} options - Input options for the web request
  * @param {string} query - A querystring
  * @returns {object} options - The coalesced result of options
  **/
-function _getRequestOptions (options, query) {
-	var
-		requestOptions = JSON.parse(JSON.stringify(DEFAULT_REQUEST_OPTIONS)),
-		/*eslint no-invalid-this:0*/
-		self = this;
+function _getRequestOptions (client, options, query) {
+	let requestOptions = JSON.parse(JSON.stringify(DEFAULT_REQUEST_OPTIONS));
 
 	// ensure default options are set, even if omitted from input options
 	requestOptions.hostname = [
-		core.Validation.coalesce(options.city, self.options.city, ''),
+		core.Validation.coalesce(options.city, client.options.city, ''),
 		// introducing fix for #7
 		core.Validation.coalesce(
 			options.baseHost,
-			self.options.baseHost,
+			client.options.baseHost,
 			DEFAULT_BASE_HOST)
 	].join('.');
 
@@ -388,9 +381,9 @@ function _getRequestOptions (options, query) {
 }
 
 export class Client {
-	constructor(options) {
+	constructor (options) {
 		this.options = options || {};
-		this.request = new web.Request(this.options);
+		this.request = new Request(this.options);
 	}
 
 	details (posting, callback) {
@@ -421,7 +414,7 @@ export class Client {
 				.get(requestOptions)
 				.then((markup) => {
 					debug('retrieved posting %o', posting);
-					let details = self::_getPostingDetails(postingUrl, markup);
+					let details = _getPostingDetails(postingUrl, markup);
 
 					return resolve(details);
 				})
@@ -435,16 +428,17 @@ export class Client {
 						return resolve(details);
 					}
 
-					details.replyUrl = parse(details.replyUrl);
+					details.replyUrl = url.parse(details.replyUrl);
 
 					if (!details.replyUrl.hostname) {
 						details.replyUrl.hostname = requestOptions.hostname;
+						details.replyUrl.protocol = requestOptions.secure ? PROTOCOL_SECURE : PROTOCOL_INSECURE;
 					}
 
 					return self.request
 						.get(details.replyUrl)
 						.then((markup) => {
-							self::_getReplyDetails(details, markup);
+							_getReplyDetails(details, markup);
 
 							return resolve(details);
 						})
@@ -458,7 +452,7 @@ export class Client {
 	}
 
 	list (options, callback) {
-		/*eslint no-undefined:0*/
+		/* eslint no-undefined : 0 */
 		return this.search(options, undefined, callback);
 	}
 
@@ -477,7 +471,7 @@ export class Client {
 		if (typeof options === 'function') {
 			callback = options;
 			options = {};
-			/*eslint no-undefined:0*/
+			/* eslint no-undefined : 0 */
 			query = undefined;
 		}
 
@@ -491,7 +485,7 @@ export class Client {
 		// create a Promise to execute the request
 		exec = new Promise((resolve, reject) => {
 			// remap options for the request
-			let requestOptions = this::_getRequestOptions(options, query);
+			let requestOptions = _getRequestOptions(this, options, query);
 
 			debug('request options set to: %o', requestOptions);
 
@@ -517,4 +511,4 @@ export class Client {
 	}
 }
 
-export default { Client }
+export default { Client };
