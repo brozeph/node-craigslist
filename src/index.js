@@ -439,6 +439,7 @@ export class Client {
 	constructor (options) {
 		this.options = options || {};
 		this.request = new Request(this.options);
+		this.replyUrl = options.replyUrl;
 	}
 
 	details (posting, callback) {
@@ -470,7 +471,6 @@ export class Client {
 				.then((markup) => {
 					debug('retrieved posting %o', posting);
 					let details = _getPostingDetails(postingUrl, markup);
-
 					return resolve(details);
 				})
 				.catch(reject);
@@ -479,6 +479,9 @@ export class Client {
 		exec = new Promise((resolve, reject) => {
 			return getDetails
 				.then((details) => {
+					
+					details.replyUrl = details.replyUrl ? details.replyUrl : this.replyUrl;
+
 					if (!details.replyUrl) {
 						return resolve(details);
 					}
