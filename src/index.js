@@ -41,6 +41,9 @@ const
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
 	QUERY_PARAM_MAX = '&max_price=',
 	QUERY_PARAM_MIN = '&min_price=',
+	QUERY_PARAM_MIN_YEAR = '&min_auto_year=',
+	QUERY_PARAM_MAX_YEAR = '&max_auto_year=',
+	QUERY_PARAM_AUTO_MAKE_MODEL = '&auto_make_model=',
 	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
 	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
@@ -349,6 +352,30 @@ function _getRequestOptions (client, options, query) {
 			requestOptions.path,
 			QUERY_PARAM_MAX,
 			options.maxPrice].join('');
+	}
+
+	// add min year (if specified)
+	if (!core.Validation.isEmpty(options.maxPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_YEAR,
+			options.minYear].join('');
+	}
+
+	// add max year (if specified)
+	if (!core.Validation.isEmpty(options.maxPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_YEAR,
+			options.maxYear].join('');
+	}
+
+	// add auto make model (if specified)
+	if (!core.Validation.isEmpty(options.maxPrice)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_AUTO_MAKE_MODEL,
+			options.autoMakeModel].join('');
 	}
 
 	// add postal (if specified)
