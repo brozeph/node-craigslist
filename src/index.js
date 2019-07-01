@@ -355,7 +355,7 @@ function _getRequestOptions (client, options, query) {
 	}
 
 	// add min year (if specified)
-	if (!core.Validation.isEmpty(options.maxPrice)) {
+	if (!core.Validation.isEmpty(options.minYear)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MIN_YEAR,
@@ -363,7 +363,7 @@ function _getRequestOptions (client, options, query) {
 	}
 
 	// add max year (if specified)
-	if (!core.Validation.isEmpty(options.maxPrice)) {
+	if (!core.Validation.isEmpty(options.maxYear)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_MAX_YEAR,
@@ -371,7 +371,7 @@ function _getRequestOptions (client, options, query) {
 	}
 
 	// add auto make model (if specified)
-	if (!core.Validation.isEmpty(options.maxPrice)) {
+	if (!core.Validation.isEmpty(options.autoMakeModel)) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_AUTO_MAKE_MODEL,

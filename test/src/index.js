@@ -153,6 +153,33 @@ describe('unit tests for node-craigslist', function () {
 			});
 		});
 
+		it('should properly use options min_auto_year and max_auto_year to override', function (done) {
+			client.search({ 'maxYear': '1993', 'minYear' : '1990' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('max_auto_year=1993');
+				requestOptions.path.should.contain('min_auto_year=1990');
+
+				done();
+			});
+		});
+
+		it('should properly use option autoMakeModel to override', function (done) {
+			client.search({ 'autoMakeModel': 'AUDI' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('auto_make_model=AUDI');
+
+				done();
+			});
+		});
+
 		it('should properly accept category', function (done) {
 			client.list({ category : 'ppa' }, function (err, data) {
 				if (err) {
