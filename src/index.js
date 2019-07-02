@@ -37,10 +37,13 @@ const
 		'searchTitlesOnly',
 		'srcType'
 	],
+	QUERY_PARAM_AUTO_MAKE_MODEL = '&auto_make_model=',
 	QUERY_PARAM_BUNDLE_DUPLICATES = '&bundleDuplicates=1',
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
 	QUERY_PARAM_MAX = '&max_price=',
+	QUERY_PARAM_MAX_YEAR = '&max_auto_year=',
 	QUERY_PARAM_MIN = '&min_price=',
+	QUERY_PARAM_MIN_YEAR = '&min_auto_year=',
 	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
 	QUERY_PARAM_POSTED_TODAY = '&postedToday=1',
@@ -351,6 +354,30 @@ function _getRequestOptions (client, options, query) {
 			options.maxPrice].join('');
 	}
 
+	// add min year (if specified)
+	if (!core.Validation.isEmpty(options.minYear)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_YEAR,
+			options.minYear].join('');
+	}
+
+	// add max year (if specified)
+	if (!core.Validation.isEmpty(options.maxYear)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_YEAR,
+			options.maxYear].join('');
+	}
+
+	// add auto make model (if specified)
+	if (!core.Validation.isEmpty(options.autoMakeModel)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_AUTO_MAKE_MODEL,
+			options.autoMakeModel].join('');
+	}
+
 	// add postal (if specified)
 	if (!core.Validation.isEmpty(options.postal)) {
 		requestOptions.path = [
@@ -412,6 +439,7 @@ export class Client {
 	constructor (options) {
 		this.options = options || {};
 		this.request = new Request(this.options);
+		this.replyUrl = options.replyUrl;
 	}
 
 	details (posting, callback) {
@@ -443,7 +471,6 @@ export class Client {
 				.then((markup) => {
 					debug('retrieved posting %o', posting);
 					let details = _getPostingDetails(postingUrl, markup);
-
 					return resolve(details);
 				})
 				.catch(reject);
@@ -452,6 +479,9 @@ export class Client {
 		exec = new Promise((resolve, reject) => {
 			return getDetails
 				.then((details) => {
+					
+					details.replyUrl = details.replyUrl ? details.replyUrl : this.replyUrl;
+
 					if (!details.replyUrl) {
 						return resolve(details);
 					}
