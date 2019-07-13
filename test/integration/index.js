@@ -8,6 +8,14 @@ const should = chai.should();
 
 describe('functional tests for node-craigslist', function () {
 	let
+		cities = [
+			'boise',
+			'boston',
+			'montreal',
+			'portland',
+			'seattle',
+			'vancouver'
+		],
 		client,
 		examplePosting,
 		exampleURL;
@@ -16,8 +24,9 @@ describe('functional tests for node-craigslist', function () {
 	this.timeout(10000);
 
 	beforeEach(function () {
+		let cityIndex = Math.floor(Math.random() * cities.length);
 		client = new craigslist.Client({
-			city : 'seattle'
+			city : cities[cityIndex]
 		});
 
 		/*
