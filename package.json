@@ -2,10 +2,11 @@
   "name": "node-craigslist",
   "description": "a client library for searching, retrieving and creating Craigslist.com listings",
   "private": false,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Joshua Thomas (http://github.com/brozeph)",
   "contributors": [
-    "Will Spielberg (http://github.com/kapysh"
+    "Will Spielberg (http://github.com/kapysh)",
+    "Leonard Labuneti (http://github.com/unitpas)"
   ],
   "engine": "node >= 4",
   "keywords": [
@@ -22,8 +23,8 @@
     "posttest": "nyc report --reporter=text-lcov | coveralls",
     "prepublish": "gulp build",
     "pretest": "gulp clean && gulp lint",
-    "test": "NODE_ENV=test nyc mocha ./test/**",
-    "test:unit": "NODE_ENV=test nyc mocha ./test/**"
+    "test": "NODE_ENV=test nyc mocha ./test/src/**",
+    "test:all": "NODE_ENV=test nyc mocha ./test/**"
   },
   "directories": {
     "test": "test"
@@ -50,10 +51,10 @@
     "nyc": "^13.2.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.3.1",
-    "cheerio": "^1.0.0-rc.2",
+    "@babel/runtime-corejs2": "^7.5.4",
+    "cheerio": "^1.0.0-rc.3",
     "debug": "^4.1.1",
-    "reqlib": "^1.0.2"
+    "reqlib": "^1.0.8"
   },
   "nyc": {
     "all": true,

@@ -1,3 +1,8 @@
+# v2.1.0 / 2019.07.02
+
+* Merged PR from @unitpas - added search options for automobiles
+* Updated `js-yaml` and `handlebars` indirect child dependencies for security
+
 # v2.0.0 / 2019.02.13
 
 * Updated babel dependencies

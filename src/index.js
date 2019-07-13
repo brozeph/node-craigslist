@@ -479,7 +479,7 @@ export class Client {
 		exec = new Promise((resolve, reject) => {
 			return getDetails
 				.then((details) => {
-					
+
 					details.replyUrl = details.replyUrl ? details.replyUrl : this.replyUrl;
 
 					if (!details.replyUrl) {
