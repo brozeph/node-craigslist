@@ -2,6 +2,7 @@
 
 * Updated dependencies
 * Updated integration test for International searching
+* Removed older versions of Node from Travis configuration
 
 # v2.1.0 / 2019.07.02
 
