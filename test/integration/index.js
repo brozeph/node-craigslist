@@ -95,7 +95,7 @@ describe('functional tests for node-craigslist', function () {
 		it('should properly search another country', function (done) {
 			client
 				.search({
-						baseHost : 'craigslist.ca',
+						baseHost : 'craigslist.org',
 						city : 'montreal'
 					},
 					'xbox')
