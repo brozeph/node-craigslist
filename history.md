@@ -1,3 +1,8 @@
+# v2.2.0 / 2020.06.23
+
+* Updated dependencies
+* Added support for `proxy` to requests
+
 # v2.1.1 / 2020.03.13
 
 * Updated dependencies
