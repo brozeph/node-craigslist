@@ -1,3 +1,7 @@
+# v2.2.1 / 2020.10.06
+
+* Updated dependences
+
 # v2.2.0 / 2020.06.23
 
 * Updated dependencies
