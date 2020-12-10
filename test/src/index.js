@@ -156,6 +156,20 @@ describe('unit tests for node-craigslist', function () {
 			});
 		});
 
+		it('should properly use options min_auto_miles and max_auto_miles to override', function (done) {
+			client.search({ 'maxMiles': '15000', 'minMiles': '10000' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('max_auto_miles=15000');
+				requestOptions.path.should.contain('min_auto_miles=10000');
+
+				done();
+			});
+		});
+
 		it('should properly use options min_auto_year and max_auto_year to override', function (done) {
 			client.search({ 'maxYear': '1993', 'minYear' : '1990' }, function (err, data) {
 				if (err) {

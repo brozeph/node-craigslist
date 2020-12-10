@@ -115,6 +115,8 @@ This method can be used to search Craigslist for specific postings.
   * `nocache` - _(optional)_ - applies appropriate headers on request to attampt to bypass any caches
   * `minYear` - _(optional)_ - minimum year (cars+trucks related search)
   * `maxYear` - _(optional)_ - maximum year (cars+trucks related search)
+  * `minMiles` - _(optional)_ - minimum miles (cars+trucks related search)
+  * `maxMiles` - _(optional)_ - maximum miles (cars+trucks related search)
   * `autoMakeModel` - _(optional)_ - auto make model (cars+trucks related search)
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
