@@ -1,3 +1,8 @@
+# v2.3.0 / 2020.11.10
+
+* Added options for auto mileage search
+* Updated dependencies
+
 # v2.2.1 / 2020.10.06
 
 * Updated dependences
