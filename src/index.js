@@ -41,8 +41,10 @@ const
 	QUERY_PARAM_BUNDLE_DUPLICATES = '&bundleDuplicates=1',
 	QUERY_PARAM_HAS_IMAGE = '&hasPic=1',
 	QUERY_PARAM_MAX = '&max_price=',
+	QUERY_PARAM_MAX_MILES = '&max_auto_miles=',
 	QUERY_PARAM_MAX_YEAR = '&max_auto_year=',
 	QUERY_PARAM_MIN = '&min_price=',
+	QUERY_PARAM_MIN_MILES = '&min_auto_miles=',
 	QUERY_PARAM_MIN_YEAR = '&min_auto_year=',
 	QUERY_PARAM_OFFSET = '&s=',
 	QUERY_PARAM_POSTAL = '&postal=',
@@ -368,6 +370,22 @@ function _getRequestOptions (client, options, query) {
 			requestOptions.path,
 			QUERY_PARAM_MAX_YEAR,
 			options.maxYear].join('');
+	}
+
+	// add min miles (if specified)
+	if (!core.Validation.isEmpty(options.minMiles)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_MILES,
+			options.minMiles].join('');
+	}
+
+	// add max miles (if specified)
+	if (!core.Validation.isEmpty(options.maxMiles)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_MILES,
+			options.maxMiles].join('');
 	}
 
 	// add auto make model (if specified)
