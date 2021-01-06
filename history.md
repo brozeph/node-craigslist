@@ -1,3 +1,7 @@
+# v2.3.1 / 2021.01.06
+
+* Added support for housing search options
+
 # v2.3.0 / 2020.11.10
 
 * Added options for auto mileage search

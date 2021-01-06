@@ -118,6 +118,13 @@ This method can be used to search Craigslist for specific postings.
   * `minMiles` - _(optional)_ - minimum miles (cars+trucks related search)
   * `maxMiles` - _(optional)_ - maximum miles (cars+trucks related search)
   * `autoMakeModel` - _(optional)_ - auto make model (cars+trucks related search)
+  * `minBedrooms` - _(optional)_ - minimum bedrooms (housing related search)
+  * `maxBedrooms` - _(optional)_ - maximum bedrooms (housing related search)
+  * `minBathrooms` - _(optional)_ - minimum bathrooms (housing related search)
+  * `maxBathrooms` - _(optional)_ - maximum bathrooms (housing related search)
+  * `minSqft` - _(optional)_ - minimum square ft  (housing related search)
+  * `maxSqft` - _(optional)_ - maximum square ft  (housing related search)
+  * `dogsOk` - _(optional)_ - when specified, only postings where dogs are ok (housing related search)
 * `query` - _(required)_ - a string query to search with
 * `callback` - _(optional)_ - a function callback that accepts two arguments - if omitted, the function will return a Promise
   * `err` - populated with details in the event of an error
