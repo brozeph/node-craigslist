@@ -2,12 +2,13 @@
   "name": "node-craigslist",
   "description": "a client library for searching, retrieving and creating Craigslist.com listings",
   "private": false,
-  "version": "2.3.0",
+  "version": "2.3.1",
   "author": "Joshua Thomas (http://github.com/brozeph)",
   "contributors": [
     "Will Spielberg (https://github.com/kapysh)",
     "Leonard Labuneti (https://github.com/unitpas)",
-    "Jeremy Allen (https://github.com/edhjer)"
+    "Jeremy Allen (https://github.com/edhjer)",
+    "Clint Decker (https://github.com/C-Deck)"
   ],
   "engine": "node >= 4",
   "keywords": [
@@ -22,43 +23,25 @@
   "scripts": {
     "lint": "gulp lint",
     "posttest": "nyc report --reporter=text-lcov | coveralls",
-    "prepublish": "gulp build",
+    "prepare": "gulp build",
     "pretest": "gulp clean && gulp lint",
-    "test": "NODE_ENV=test nyc mocha ./test/src/**",
-    "test:all": "NODE_ENV=test nyc mocha ./test/**"
+    "test": "NODE_ENV=test nyc mocha --reporter spec ./test/src/**",
+    "test:all": "NODE_ENV=test nyc mocha --reporter spec ./test/**"
   },
   "directories": {
     "test": "test"
   },
   "license": "MIT",
-  "nyc": {
-    "all": true,
-    "include": [
-      "src"
-    ],
-    "instrument": false,
-    "report-dir": "./reports",
-    "reporter": [
-      "lcov",
-      "text",
-      "text-summary"
-    ],
-    "require": [
-      "@babel/register"
-    ],
-    "sourceMap": false
-  },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
+    "@babel/eslint-parser": "^7.12.1",
+    "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/preset-env": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "@babel/register": "^7.12.10",
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-istanbul": "^6.0.0",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
-    "eslint-plugin-babel": "^5.3.1",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
@@ -70,7 +53,7 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.12.5",
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "^1.0.0-rc.5",
     "debug": "^4.3.1",
     "reqlib": "^1.0.11"
   }
