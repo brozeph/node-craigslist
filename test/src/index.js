@@ -244,6 +244,61 @@ describe('unit tests for node-craigslist', function () {
 				})
 				.catch(done);
 		});
+
+		it('should properly use options min_bedroomsand max_bedrooms to override', function (done) {
+			client.search({ 'maxBedrooms': '3', 'minBedrooms' : '2' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('max_bedrooms=3');
+				requestOptions.path.should.contain('min_bedrooms=2');
+
+				done();
+			});
+		});
+
+		it('should properly use options min_bathrooms and max_bathrooms to override', function (done) {
+			client.search({ 'maxBathrooms': '2', 'minBathrooms' : '1' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('max_bathrooms=2');
+				requestOptions.path.should.contain('min_bathrooms=1');
+
+				done();
+			});
+		});
+
+		it('should properly use options min_Sqft and max_Sqft to override', function (done) {
+			client.search({ 'maxSqft': '1400', 'minSqft' : '400' }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('min_Sqft=400');
+				requestOptions.path.should.contain('max_Sqft=1400');
+
+				done();
+			});
+		});
+
+		it('should properly use options pets_dog to override', function (done) {
+			client.search({ 'dogsOk': true }, function (err, data) {
+				if (err) {
+					return done(err);
+				}
+
+				should.exist(data);
+				requestOptions.path.should.contain('pets_dog=1');
+
+				done();
+			});
+		});
 	});
 
 	describe('#search', function () {

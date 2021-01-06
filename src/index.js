@@ -53,6 +53,13 @@ const
 	QUERY_PARAM_SEARCH_DISTANCE = '&search_distance=',
 	QUERY_PARAM_SEARCH_NEARBY = '&searchNearby=1',
 	QUERY_PARAM_SEARCH_TITLES_ONLY = '&srchType=T',
+	QUERY_PARAM_MIN_BEDROOMS = '&min_bedrooms=',
+	QUERY_PARAM_MAX_BEDROOMS = '&max_bedrooms=',
+	QUERY_PARAM_MIN_BATHROOMS = '&min_bathrooms=',
+	QUERY_PARAM_MAX_BATHROOMS = '&max_bathrooms=',
+	QUERY_PARAM_MIN_SQFT = '&min_Sqft=',
+	QUERY_PARAM_MAX_SQFT = '&max_Sqft=',
+	QUERY_PARAM_DOGS_OK = '&pets_dog=1',
 	RE_HTML = /\.htm(l)?/i,
 	RE_TAGS_MAP = /map/i;
 
@@ -431,6 +438,60 @@ function _getRequestOptions (client, options, query) {
 		requestOptions.path = [
 			requestOptions.path,
 			QUERY_PARAM_SEARCH_TITLES_ONLY].join('');
+	}
+	// add max bedrooms (if specified)
+	if (!core.Validation.isEmpty(options.maxBedrooms)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_BEDROOMS,
+			options.maxBedrooms].join('');
+	}
+
+	// add min bedrooms (if specified)
+	if (!core.Validation.isEmpty(options.minBedrooms)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_BEDROOMS,
+			options.minBedrooms].join('');
+	}
+
+	// add max bathrooms(if specified)
+	if (!core.Validation.isEmpty(options.maxBathrooms)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_BATHROOMS,
+			options.maxBathrooms].join('');
+	}
+
+	// add min bathrooms (if specified)
+	if (!core.Validation.isEmpty(options.minBathrooms)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_BATHROOMS,
+			options.minBathrooms].join('');
+	}
+
+	// add max square ft (if specified)
+	if (!core.Validation.isEmpty(options.maxSqft)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MAX_SQFT,
+			options.maxSqft].join('');
+	}
+
+	// add min square ft (if specified)
+	if (!core.Validation.isEmpty(options.minSqft)) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_MIN_SQFT,
+			options.minSqft].join('');
+	}
+		
+	// add dogs ok (if specified)
+	if (options.dogsOk) {
+		requestOptions.path = [
+			requestOptions.path,
+			QUERY_PARAM_DOGS_OK].join('');
 	}
 
 	// add offset (if specified)
